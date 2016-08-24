@@ -7,31 +7,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.thingword.alphonso.materialmanage.R;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by WangChang on 2016/5/15.
  */
-public class TvFragment extends Fragment{
+public class TextFragment extends Fragment{
+    TextView text;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_text, container, false);
+        text = (TextView) view.findViewById(R.id.text);
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        TextView tv = (TextView) getActivity().findViewById(R.id.tv);
-        tv.setText(getArguments().getString("ARGS"));
+
+        text.setText(getArguments().getString("ARGS"));
     }
 
-    public static TvFragment newInstance(String content) {
+    public static TextFragment newInstance(String content) {
         Bundle args = new Bundle();
         args.putString("ARGS", content);
-        TvFragment fragment = new TvFragment();
+        TextFragment fragment = new TextFragment();
         fragment.setArguments(args);
         return fragment;
     }

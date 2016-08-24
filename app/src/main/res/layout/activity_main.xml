@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.thingword.alphonso.materialmanage.MainActivity">
 
-    <android.support.v4.view.ViewPager
+    <com.thingword.alphonso.materialmanage.view.NoSrollViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"

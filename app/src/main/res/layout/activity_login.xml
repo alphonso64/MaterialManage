@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loginlayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#343434"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/logoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="@string/logo_content"
+                android:textColor="#f1f2f4"
+                android:textSize="35dp"></TextView>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:paddingTop="30dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/loginNameText"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/login_edittext_bg"
+                android:dropDownSelector="@drawable/list_selector"
+                android:dropDownVerticalOffset="3dp"
+                android:hint="@string/loginname_hint"
+                android:popupBackground="@drawable/popup_bg"
+                android:singleLine="true"
+                android:textColorHint="#d1c8ba"
+                android:textSize="15sp"
+                android:text="tcc" />
+
+            <EditText
+                android:id="@+id/loginPasswordText"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/loginNameText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/login_edittext_bg"
+                android:hint="@string/loginpassword_hint"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColorHint="#d1c8ba"
+                android:textSize="15sp"
+                android:text="123456" />
+
+            <Button
+                android:id="@+id/loginbutton"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/loginPasswordText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:width="300dp"
+                android:background="@drawable/login_button_seletor"
+                android:text="@string/login_button"
+                android:textColor="#ffffff"
+                android:textSize="15sp">
+
+                <requestFocus />
+            </Button>
+
+            <Button
+                android:id="@+id/signbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/loginbutton"
+                android:layout_below="@+id/loginbutton"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/login_button_seletor"
+                android:text="@string/sign_button"
+                android:textColor="#ffffff"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

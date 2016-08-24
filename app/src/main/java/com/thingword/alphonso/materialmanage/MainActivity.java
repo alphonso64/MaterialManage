@@ -1,65 +1,108 @@
 package com.thingword.alphonso.materialmanage;
 
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.ashokvarma.bottomnavigation.BadgeItem;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
-import com.thingword.alphonso.materialmanage.fragment.BlankFragment;
-import com.thingword.alphonso.materialmanage.fragment.BookFragment;
-import com.thingword.alphonso.materialmanage.fragment.GameFragment;
-import com.thingword.alphonso.materialmanage.fragment.HomeFragment;
-import com.thingword.alphonso.materialmanage.fragment.MusicFragment;
-import com.thingword.alphonso.materialmanage.fragment.TvFragment;
+import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
+import com.thingword.alphonso.materialmanage.bean.User;
+import com.thingword.alphonso.materialmanage.fragment.DistributionFragment;
+import com.thingword.alphonso.materialmanage.fragment.LoadingFragment;
+import com.thingword.alphonso.materialmanage.fragment.ProduceLineFragment;
+import com.thingword.alphonso.materialmanage.fragment.SetFragment;
+import com.thingword.alphonso.materialmanage.fragment.TextFragment;
+import com.thingword.alphonso.materialmanage.fragment.UnloadingFragment;
+import com.thingword.alphonso.materialmanage.http.ServerConfig.Authority;
+import com.thingword.alphonso.materialmanage.view.NoSrollViewPager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class MainActivity extends FragmentActivity implements BottomNavigationBar.OnTabSelectedListener {
-    private ViewPager mViewPager;
+public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener {
+    private NoSrollViewPager mViewPager;
     private ArrayList<Fragment> mFragments;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
-        bottomNavigationBar.setMode(BottomNavigationBar.MODE_DEFAULT);
+        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         bottomNavigationBar
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC
                 );
-        BadgeItem numberBadgeItem = new BadgeItem()
-                .setBorderWidth(4)
-                .setBackgroundColor(Color.RED)
-                .setText("5")
-                .setHideOnSelect(true);
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_home_white_24dp, "Home").setActiveColorResource(R.color.orange).setBadgeItem(numberBadgeItem))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_book_white_24dp, "Books").setActiveColorResource(R.color.teal))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_music_note_white_24dp, "Music").setActiveColorResource(R.color.blue))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_tv_white_24dp, "Movies & TV").setActiveColorResource(R.color.brown))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_videogame_asset_white_24dp, "Games").setActiveColorResource(R.color.grey).setBadgeItem(numberBadgeItem))
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_archive_white_24dp, R.string.tab_loading).setActiveColorResource(R.color.colorPrimaryDark))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_send_white_24dp, R.string.tab_distribution).setActiveColorResource(R.color.colorPrimaryDark))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_drag_handle_white_24dp, R.string.tab_line).setActiveColorResource(R.color.colorPrimaryDark))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_settings_white_24dp, R.string.tab_set).setActiveColorResource(R.color.colorPrimaryDark))
                 .setFirstSelectedPosition(0)
                 .initialise();
+        bottomNavigationBar.setTabSelectedListener(this);
 
-        mViewPager = (ViewPager)findViewById(R.id.viewPager) ;
-        mFragments = getFragments();
+        initFragments();
+        mViewPager = (NoSrollViewPager)findViewById(R.id.viewPager) ;
         mViewPager.setAdapter(new MyFragmentPageAdapter(getSupportFragmentManager()));
         mViewPager.setCurrentItem(0);
         mViewPager.setOffscreenPageLimit(6);
-        bottomNavigationBar.setTabSelectedListener(this);
     }
+
+    public void initFragments (){
+        User user = UserSharedPreferences.getCusUser(this);
+        mFragments = new ArrayList<>();
+
+        int index = 0;
+        Integer authority;
+        try{
+            authority = Integer.parseInt(user.getAuthority());
+        }
+        catch(Exception e){
+            authority = 0;
+        }
+        Log.e("testcc","authority:"+authority);
+        int a1 = (authority&Authority.UNLOADING_AUTHORITY);
+        Log.e("testcc","authority 1:"+a1+" "+Authority.UNLOADING_AUTHORITY);
+        if((authority&Authority.LOADING_AUTHORITY)!=0){
+            mFragments.add(LoadingFragment.newInstance("入库"));
+        }else{
+            mFragments.add(TextFragment.newInstance("没有权限"));
+        }
+
+        if((authority&Authority.UNLOADING_AUTHORITY) != 0){
+            mFragments.add(UnloadingFragment.newInstance("出库"));
+        }else{
+            mFragments.add(TextFragment.newInstance("没有权限"));
+        }
+
+        if((authority&Authority.DISTRIBUTION_AUTHORITY)!= 0){
+            mFragments.add(DistributionFragment.newInstance("配料"));
+        }else{
+            mFragments.add(TextFragment.newInstance("没有权限"));
+        }
+
+        if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
+            mFragments.add(ProduceLineFragment.newInstance("产线"));
+        }else{
+            mFragments.add(TextFragment.newInstance("没有权限"));
+        }
+
+        mFragments.add(SetFragment.newInstance("设置"));
+    }
+
+
 
     @Override
     public void onTabSelected(int position) {
-        Log.e("testcc","onTabSelected:"+position);
         mViewPager.setCurrentItem(position,false);
     }
 
@@ -73,17 +116,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationBa
 
     }
 
-    private ArrayList<Fragment> getFragments() {
-        ArrayList<Fragment> fragments = new ArrayList<>();
-        fragments.add(HomeFragment.newInstance("HomeFragment"));
-        fragments.add(BookFragment.newInstance("BookFragment"));
-        fragments.add(GameFragment.newInstance("GameFragment"));
-        fragments.add(MusicFragment.newInstance("MusicFragment"));
-        fragments.add(TvFragment.newInstance("TvFragment"));
-        return fragments;
-    }
-
-    public class MyFragmentPageAdapter extends FragmentPagerAdapter {
+    public class MyFragmentPageAdapter extends FragmentStatePagerAdapter {
 
         public MyFragmentPageAdapter(FragmentManager fm) {
             super(fm);
