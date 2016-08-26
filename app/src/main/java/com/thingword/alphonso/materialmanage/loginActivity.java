@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.litesuits.http.exception.HttpException;
 import com.litesuits.http.listener.HttpListener;
 import com.litesuits.http.response.Response;
+import com.thingword.alphonso.materialmanage.DataBase.DataProvider;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.ServerMessage;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
@@ -57,6 +58,7 @@ public class loginActivity extends AppCompatActivity {
                     String authortity = (String) object.get(ServerMessage.RETURN_AUTH);
                     if(result.equals(ServerMessage.RETURN_SUCCESS)){
                         UserSharedPreferences.setUser(loginActivity.this,name,authortity);
+                        DataProvider.resetDBHelper();
                         loginJump();
                     }else{
                         Toast toast = Toast.makeText(getApplicationContext(),

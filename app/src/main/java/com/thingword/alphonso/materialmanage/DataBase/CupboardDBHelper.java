@@ -3,7 +3,9 @@ package com.thingword.alphonso.materialmanage.DataBase;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
@@ -12,15 +14,20 @@ import static nl.qbusict.cupboard.CupboardFactory.cupboard;
  * Created by thingword-A on 2016/8/24.
  */
 public class CupboardDBHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "myapp.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "data";
+    private static final int DB_NEW_VERSION = 2;
+    private static final int DB_BASE_VERSION = 1;
+    private String name;
 
     static {
         cupboard().register(User.class);
+        cupboard().register(LoadingInfo.class);
     }
 
-    public CupboardDBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    public CupboardDBHelper(Context context,String name) {
+        super(context,  DATABASE_NAME + "_"+name + ".db", null, DB_BASE_VERSION);
+        Log.e("testcc", DATABASE_NAME + "_"+name + ".db");
+        this.name = name;
     }
 
     @Override

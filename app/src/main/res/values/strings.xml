@@ -26,4 +26,15 @@
     <string name="app_version">版本</string>
     <string name="quit">退出登录</string>
     <string name="other_opt">其他</string>
+
+    <string name="search_title">搜索</string>
+    <string name="add_title">添加列表</string>
+    <string name="clear_title">清空列表</string>
+    <string name="cam_title">扫一扫</string>
+
+    <string name="cancle">取消</string>
+    <string name="sure">确定</string>
+    <string name="print">打印</string>
+
+    <string name="no_record">没有记录</string>
 </resources>

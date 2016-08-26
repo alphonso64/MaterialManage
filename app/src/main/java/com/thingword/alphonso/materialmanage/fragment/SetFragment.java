@@ -30,7 +30,7 @@ import butterknife.Unbinder;
  */
 public class SetFragment extends Fragment{
     private Unbinder unbinder;
-    @BindView(R.id.toolbar)
+    @BindView(R.id.set_toolbar)
     Toolbar toolbar;
 
     @Nullable
@@ -44,8 +44,8 @@ public class SetFragment extends Fragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         toolbar.setTitle(R.string.tab_set);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
     }
 
     public static SetFragment newInstance(String content) {

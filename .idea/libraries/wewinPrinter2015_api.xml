@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="wewinPrinter2015_api">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/src/main/libs/wewinPrinter2015_api.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

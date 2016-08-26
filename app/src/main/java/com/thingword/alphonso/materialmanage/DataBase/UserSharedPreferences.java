@@ -29,7 +29,7 @@ public class UserSharedPreferences {
         User user = new User();
         SharedPreferences sp = ctx.getSharedPreferences(SYSConfigure.LOGIN_DB,
                 Activity.MODE_PRIVATE);
-        String name = sp.getString(SYSConfigure.LOGIN_DB_COLB, null);
+        String name = sp.getString(SYSConfigure.LOGIN_DB_COLA, null);
         String authortity = sp.getString(SYSConfigure.LOGIN_DB_COLC, null);
         user.setUsername(name);
         user.setAuthority(authortity);
