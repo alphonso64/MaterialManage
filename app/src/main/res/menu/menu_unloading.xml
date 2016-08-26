@@ -25,7 +25,7 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/load_clear"
+        android:id="@+id/unload_clear"
         android:orderInCategory="100"
         android:title="@string/clear_title"
         app:showAsAction="collapseActionView" />

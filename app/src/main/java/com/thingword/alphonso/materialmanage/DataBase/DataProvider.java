@@ -16,6 +16,7 @@ import android.util.Log;
 
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
@@ -26,17 +27,22 @@ public class DataProvider extends ContentProvider {
     public static final String SCHEME = "content://";
 
     private static final int LOADING_TABLE = 1;
+    private static final int UNLOADING_TABLE = 2;
 
     public static final String PATH_LOADING_TABLE = "/loadinginfo";
+    public static final String PATH_UNLOADING_TABLE = "/unloadinginfo";
 
     public static final Uri LOADING_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_LOADING_TABLE);
+    public static final Uri UNLOADING_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_UNLOADING_TABLE);
 
-    public static final String LOADING_TABLE_CONTENT_TYPE = "com.task";
+    public static final String LOADING_TABLE_CONTENT_TYPE = "com.task.loading";
+    public static final String UNLOADING_TABLE_CONTENT_TYPE = "com.task.unloading";
 
     private static CupboardDBHelper mDBHelper;
 
     private static final UriMatcher sUriMATCHER = new UriMatcher(UriMatcher.NO_MATCH) {{
         addURI(AUTHORITY, "loadinginfo", LOADING_TABLE);//Demo列表
+        addURI(AUTHORITY, "unloadinginfo", UNLOADING_TABLE);//Demo列表
     }};
 
     public static CupboardDBHelper getDBHelper() {
@@ -73,6 +79,14 @@ public class DataProvider extends ContentProvider {
                             getCursor();
                     cursor.setNotificationUri(getContext().getContentResolver(), uri);
                     break;
+                case UNLOADING_TABLE://Demo列表
+                    cursor = cupboard().withDatabase(db).query(UnLoadingInfo.class).
+                            withProjection(projection).
+                            withSelection(selection, selectionArgs).
+                            orderBy(sortOrder).
+                            getCursor();
+                    cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown Uri" + uri);
             }
@@ -87,6 +101,9 @@ public class DataProvider extends ContentProvider {
             case LOADING_TABLE://Demo列表
                 table = LoadingInfoDataHelper.TABLE_NAME;
                 break;
+            case UNLOADING_TABLE://Demo列表
+                table = UnLoadingInfoDataHelper.TABLE_NAME;
+                break;
             default:
                 throw new IllegalArgumentException("Unknown Uri" + uri);
         }
@@ -98,6 +115,8 @@ public class DataProvider extends ContentProvider {
         switch (sUriMATCHER.match(uri)) {
             case LOADING_TABLE:
                 return LOADING_TABLE_CONTENT_TYPE;
+            case UNLOADING_TABLE:
+                return UNLOADING_TABLE_CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown Uri" + uri);
         }
@@ -129,6 +148,7 @@ public class DataProvider extends ContentProvider {
     @Override
     public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
         synchronized (obj) {
+            Log.e("testcc","bulkInsert");
             SQLiteDatabase db = getDBHelper().getWritableDatabase();
             db.beginTransaction();
             try {
@@ -155,6 +175,7 @@ public class DataProvider extends ContentProvider {
             db.beginTransaction();
             try {
                 count = db.delete(matchTable(uri), selection, selectionArgs);
+                Log.e("testcc","del:"+count);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();

@@ -74,9 +74,7 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
     private LoadingInfoCursorAdapter mAdapter;
     private Calendar calendar;
 
-    private static final int CLEAR_LIST = 0;
     private static final int DATE_LIST = 1;
-
     private int batch;
     private int printnum;
     private int printmaxNum = 10;

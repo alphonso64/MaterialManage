@@ -33,6 +33,7 @@ public class HttpClient {
     //登陆判断
     public static final String LOGIN_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqUserLoginInfo";
     public static final String LOADING_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqLoadingInfo";
+    public static final String UNLOADING_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqUnLoadingInfo";
 
     private HttpClient() {
         liteHttp = LiteHttp.build(null)
@@ -75,6 +76,21 @@ public class HttpClient {
             return;
         }
         StringRequest stringRequest = new StringRequest(LOADING_URL)
+                .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
+
+        liteHttp.executeAsync(stringRequest);
+    }
+
+    public void getUnLoadingInfo(HttpListener<String> listener, String date, String person) {
+        if (listener == null || date == null || person == null) return;
+        JSONObject object = new JSONObject();
+        try {
+            object.put("date", date);
+            object.put("person", person);
+        } catch (JSONException e) {
+            return;
+        }
+        StringRequest stringRequest = new StringRequest(UNLOADING_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
 
         liteHttp.executeAsync(stringRequest);

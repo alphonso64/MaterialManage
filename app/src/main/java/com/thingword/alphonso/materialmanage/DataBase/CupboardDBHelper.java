@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
@@ -22,6 +23,7 @@ public class CupboardDBHelper extends SQLiteOpenHelper {
     static {
         cupboard().register(User.class);
         cupboard().register(LoadingInfo.class);
+        cupboard().register(UnLoadingInfo.class);
     }
 
     public CupboardDBHelper(Context context,String name) {

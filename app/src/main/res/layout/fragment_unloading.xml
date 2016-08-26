@@ -13,4 +13,10 @@
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/uld_recyclerview"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical" />
 </LinearLayout>
