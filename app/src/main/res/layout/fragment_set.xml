@@ -112,4 +112,34 @@
             android:text="@string/quit"
             />
     </RelativeLayout>
+
+    <TextView
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:textSize="15sp"
+        android:layout_marginTop="20dp"
+        android:text="@string/data_opt"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:id="@+id/ly_updatedata"
+        android:background="@drawable/layout_selector"
+        >
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:text="@string/update_data"
+            />
+    </RelativeLayout>
 </LinearLayout>

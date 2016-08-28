@@ -17,6 +17,7 @@ public class UnLoadingInfo {
     private String cInvDefine8;
     private String invcode;
     private String shopnum;
+    private String checked;
 
     public String getcInvCode() {
         return cInvCode;
@@ -93,5 +94,13 @@ public class UnLoadingInfo {
 
     public void setShopnum(String shopnum) {
         this.shopnum = shopnum;
+    }
+
+    public String getChecked() {
+        return checked;
+    }
+
+    public void setChecked(String checked) {
+        this.checked = checked;
     }
 }

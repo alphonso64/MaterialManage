@@ -17,6 +17,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ScanCamActivity">
+        </activity>
+        <activity android:name=".DistriScanCamActivity">
+        </activity>
+        <activity android:name=".ReloadingScanActivity">
+        </activity>
         <provider
             android:name=".DataBase.DataProvider"
             android:authorities="com.thingword.mam"

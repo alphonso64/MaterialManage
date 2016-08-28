@@ -150,7 +150,8 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
                         String date = simpleDateFormat.format(calendar.getTime());
                         TextView tx = (TextView) dialog.getCustomView().findViewById(R.id.auditor);
                         String person = tx.getText().toString();
-                        setLoadingInfoHttpReq(date, person);
+                        //setLoadingInfoHttpReq(date, person);
+                        getLoaderManager().restartLoader(DATE_LIST, null, LoadingFragment.this);
                     }
                 })
                 .negativeText(R.string.cancle).build();
@@ -287,7 +288,6 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         if (id == DATE_LIST) {
-            Log.e("testcc", "DATE_LIST");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String date = simpleDateFormat.format(calendar.getTime());
             return mDataHelper.getDateCursorLoader(date);

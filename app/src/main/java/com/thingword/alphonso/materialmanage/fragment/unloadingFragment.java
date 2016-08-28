@@ -1,5 +1,8 @@
 package com.thingword.alphonso.materialmanage.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,7 +35,10 @@ import com.thingword.alphonso.materialmanage.CursorAdapter.UnLoadingInfoCursorAd
 import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
+import com.thingword.alphonso.materialmanage.MainActivity;
 import com.thingword.alphonso.materialmanage.R;
+import com.thingword.alphonso.materialmanage.ScanCamActivity;
+import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
@@ -59,11 +65,10 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     private UnLoadingInfoCursorAdapter mAdapter;
 
     private static final int DATE_LIST = 1;
-
     private Calendar calendar;
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_unloading, container, false);
         unbinder = ButterKnife.bind(this, view);
         toolbar.setTitle(R.string.tab_unloading);
@@ -79,6 +84,21 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                     case R.id.unload_clear:
                         getLoaderManager().destroyLoader(DATE_LIST);
                         break;
+                    case R.id.unload_cam:
+                        if(calendar != null){
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            String date = simpleDateFormat.format(calendar.getTime());
+                            MApplication app = (MApplication) getActivity().getApplication();
+                            app.setUnloadWorkDate(date);
+                            Intent intent = new Intent(getActivity(), ScanCamActivity.class);
+                            startActivity(intent);
+                        }else{
+                            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
+                                    setTitle("请添加工作列表").
+                                    setPositiveButton("确定",null)
+                                    .create();
+                            alertDialog.show();
+                        }
                     default:
                 }
                 return false;
@@ -114,28 +134,30 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
 
 
     private void loadDiag() {
+        final Calendar tempCalendar = Calendar.getInstance();
         MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
                 .customView(R.layout.dialog_unload_calendar, true)
                 .positiveText(R.string.sure)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        calendar = tempCalendar;
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         String date = simpleDateFormat.format(calendar.getTime());
                         TextView tx = (TextView) dialog.getCustomView().findViewById(R.id.excutor);
                         String person = tx.getText().toString();
-                        setUnLoadingInfoHttpReq(date, person);
+                        //setUnLoadingInfoHttpReq(date, person);
+                        getLoaderManager().restartLoader(DATE_LIST, null, UnloadingFragment.this);
                     }
                 })
                 .negativeText(R.string.cancle).build();
         TextView tx = (TextView) materialDialog.getCustomView().findViewById(R.id.excutor);
         tx.setText(UserSharedPreferences.getCusUser(getActivity()).getUsername());
         CalendarView cv = (CalendarView) materialDialog.getCustomView().findViewById(R.id.unload_calendarView);
-        calendar = Calendar.getInstance();
         cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                calendar.set(year, month, dayOfMonth);
+                tempCalendar.set(year, month, dayOfMonth);
             }
         });
         materialDialog.show();

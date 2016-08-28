@@ -12,6 +12,8 @@ import Jack.WewinPrinterHelper.WwPrint;
 public class MApplication extends Application {
     private static Context sContext;
     private WwPrint printer;
+    private String unloadWorkDate;
+    private String distriWorkDate;
     public WwPrint getPrinter(){
         if(printer == null)
         {
@@ -36,4 +38,19 @@ public class MApplication extends Application {
         super.onTerminate();
     }
 
+    public String getUnloadWorkDate() {
+        return unloadWorkDate;
+    }
+
+    public void setUnloadWorkDate(String unloadWorkDate) {
+        this.unloadWorkDate = unloadWorkDate;
+    }
+
+    public String getDistriWorkDate() {
+        return distriWorkDate;
+    }
+
+    public void setDistriWorkDate(String distriWorkDate) {
+        this.distriWorkDate = distriWorkDate;
+    }
 }

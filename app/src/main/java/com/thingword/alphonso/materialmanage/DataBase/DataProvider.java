@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
@@ -28,21 +29,26 @@ public class DataProvider extends ContentProvider {
 
     private static final int LOADING_TABLE = 1;
     private static final int UNLOADING_TABLE = 2;
+    private static final int DISTRIBUTION_TABLE = 3;
 
     public static final String PATH_LOADING_TABLE = "/loadinginfo";
     public static final String PATH_UNLOADING_TABLE = "/unloadinginfo";
+    public static final String PATH_DISTRIBUTION_TABLE = "/distributioninfo";
 
     public static final Uri LOADING_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_LOADING_TABLE);
     public static final Uri UNLOADING_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_UNLOADING_TABLE);
+    public static final Uri DISTRIBUTION_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_DISTRIBUTION_TABLE);
 
     public static final String LOADING_TABLE_CONTENT_TYPE = "com.task.loading";
     public static final String UNLOADING_TABLE_CONTENT_TYPE = "com.task.unloading";
+    public static final String DISTRIBUTION_TABLE_CONTENT_TYPE = "com.task.distribution";
 
     private static CupboardDBHelper mDBHelper;
 
     private static final UriMatcher sUriMATCHER = new UriMatcher(UriMatcher.NO_MATCH) {{
-        addURI(AUTHORITY, "loadinginfo", LOADING_TABLE);//Demo列表
-        addURI(AUTHORITY, "unloadinginfo", UNLOADING_TABLE);//Demo列表
+        addURI(AUTHORITY, "loadinginfo", LOADING_TABLE);
+        addURI(AUTHORITY, "unloadinginfo", UNLOADING_TABLE);
+        addURI(AUTHORITY, "distributioninfo", DISTRIBUTION_TABLE);
     }};
 
     public static CupboardDBHelper getDBHelper() {
@@ -50,7 +56,6 @@ public class DataProvider extends ContentProvider {
             User user = UserSharedPreferences.getCusUser(MApplication.getContext());
             mDBHelper = new CupboardDBHelper(MApplication.getContext(), user.getUsername());
         }
-
         return mDBHelper;
     }
 
@@ -87,6 +92,14 @@ public class DataProvider extends ContentProvider {
                             getCursor();
                     cursor.setNotificationUri(getContext().getContentResolver(), uri);
                     break;
+                case DISTRIBUTION_TABLE://Demo列表
+                    cursor = cupboard().withDatabase(db).query(DistributionInfo.class).
+                            withProjection(projection).
+                            withSelection(selection, selectionArgs).
+                            orderBy(sortOrder).
+                            getCursor();
+                    cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown Uri" + uri);
             }
@@ -104,6 +117,9 @@ public class DataProvider extends ContentProvider {
             case UNLOADING_TABLE://Demo列表
                 table = UnLoadingInfoDataHelper.TABLE_NAME;
                 break;
+            case DISTRIBUTION_TABLE://Demo列表
+                table = DistributionInfoDataHelper.TABLE_NAME;
+                break;
             default:
                 throw new IllegalArgumentException("Unknown Uri" + uri);
         }
@@ -117,6 +133,8 @@ public class DataProvider extends ContentProvider {
                 return LOADING_TABLE_CONTENT_TYPE;
             case UNLOADING_TABLE:
                 return UNLOADING_TABLE_CONTENT_TYPE;
+            case DISTRIBUTION_TABLE:
+                return DISTRIBUTION_TABLE_CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown Uri" + uri);
         }

@@ -14,6 +14,7 @@ public class LoadingInfo {
     private String cInvStd;
     private String cInvName;
     private String cInvCode;
+    private String checked;
 
     public String getcInvCode() {
         return cInvCode;
@@ -66,5 +67,13 @@ public class LoadingInfo {
 
     public void setcDate(String cDate) {
         this.cDate = cDate;
+    }
+
+    public String getChecked() {
+        return checked;
+    }
+
+    public void setChecked(String checked) {
+        this.checked = checked;
     }
 }

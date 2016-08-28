@@ -2,6 +2,7 @@ package com.thingword.alphonso.materialmanage.http.ServerConfig;
 
 import android.util.Log;
 
+import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 
@@ -94,6 +95,7 @@ public class Parser {
                 if (!(value.equals("null") && value != null)) {
                     ld.setcInvCode(value);
                 }
+                ld.setChecked("false");
                 ls.add(ld);
             }
             return ls;
@@ -148,7 +150,67 @@ public class Parser {
                 if (!(value.equals("null") && value != null)) {
                     ld.setShopnum(value);
                 }
+                ld.setChecked("false");
+                ls.add(ld);
+            }
+            return ls;
+        } catch (JSONException e) {
+            // e.printStackTrace();
+        }
+        return null;
+    }
 
+
+    public static List<DistributionInfo> parseDistriInfo(String val) {
+        try {
+            List<DistributionInfo> ls = new ArrayList<>();
+            JSONArray array = new JSONArray(val);
+            Log.e("testcc", "DistributionInfo  array" + array.length());
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jobject = (JSONObject) array.get(i);
+                DistributionInfo ld = new DistributionInfo();
+                String value = (String) jobject.get("cBatch");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setcBatch(value);
+                }
+
+                value = (String) jobject.get("date");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setcDate(value);
+                }
+                value = (String) jobject.get("iQuantity");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setiQuantity(value);
+                }
+                value = (String) jobject.get("cInvStd");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setcInvStd(value);
+                }
+                value = (String) jobject.get("cInvName");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setcInvName(value);
+                }
+                value = (String) jobject.get("cInvCode");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setcInvCode(value);
+                }
+                value = (String) jobject.get("shopnum");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setShopnum(value);
+                }
+                value = (String) jobject.get("cMoCode");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setcMoCode(value);
+                }
+                value = (String) jobject.get("invcode");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setInvcode(value);
+                }
+                value = (String) jobject.get("cinvstd_1");
+                if (!(value.equals("null") && value != null)) {
+                    ld.setCinvstd_1(value);
+                }
+                ld.setChecked("false");
                 ls.add(ld);
             }
             return ls;

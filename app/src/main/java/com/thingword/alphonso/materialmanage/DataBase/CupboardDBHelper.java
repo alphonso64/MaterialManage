@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
@@ -24,6 +25,7 @@ public class CupboardDBHelper extends SQLiteOpenHelper {
         cupboard().register(User.class);
         cupboard().register(LoadingInfo.class);
         cupboard().register(UnLoadingInfo.class);
+        cupboard().register(DistributionInfo.class);
     }
 
     public CupboardDBHelper(Context context,String name) {

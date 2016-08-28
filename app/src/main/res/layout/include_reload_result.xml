@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/result_view"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|center_horizontal"
+    android:background="@color/result_view"
+    android:baselineAligned="false"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/relodscan_right_text"
+        android:paddingTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        android:textColor="@color/right_color"
+        android:text="条码相符"/>
+
+    <TextView
+        android:id="@+id/relodscan_wrong_text"
+        android:paddingTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/wrong_color"
+        android:text="条码不相同"/>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:paddingTop="20dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="111111111111"
+                android:gravity="center"/>
+
+            <RadioButton
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="扫描条码一"
+                android:id="@+id/radioButton1"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:paddingTop="20dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="111111111111"
+                android:gravity="center"/>
+
+            <RadioButton
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="扫描条码二"
+                android:id="@+id/radioButton2"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

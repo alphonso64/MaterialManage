@@ -31,9 +31,25 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
         UnLoadingInfo ld = UnLoadingInfo.fromCursor(cursor);
+        if(ld.getChecked().equals("true")){
+            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.colorGray));
+        }else{
+            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
+        }
         ((CusViewHolder) holder).title_a.setText("名称:"+ld.getcInvName());
         ((CusViewHolder) holder).title_b.setText("位置:"+ld.getcInvDefine8());
-        ((CusViewHolder) holder).title_c.setText("物料编码:"+ld.getcBatch());
+        ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcBatch());
+        ((CusViewHolder) holder).title_c2.setText(ld.getShopnum());
         ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
         ((CusViewHolder) holder).title_d2.setText(ld.getcDate());
     }
@@ -48,7 +64,8 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
     public static class CusViewHolder extends RecyclerView.ViewHolder {
         TextView title_a;
         TextView title_b;
-        TextView title_c;
+        TextView title_c1;
+        TextView title_c2;
         TextView title_d1;
         TextView title_d2;
         UnLoadingInfoCursorAdapter mAdapter;
@@ -56,7 +73,8 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
             super(itemView);
             title_a = (TextView) itemView.findViewById(R.id.cv_title_a);
             title_b = (TextView) itemView.findViewById(R.id.cv_title_b);
-            title_c = (TextView) itemView.findViewById(R.id.cv_title_c);
+            title_c1 = (TextView) itemView.findViewById(R.id.cv_title_c1);
+            title_c2 = (TextView) itemView.findViewById(R.id.cv_title_c2);
             title_d1 = (TextView) itemView.findViewById(R.id.cv_title_d1);
             title_d2 = (TextView) itemView.findViewById(R.id.cv_title_d2);
             mAdapter = adapter;

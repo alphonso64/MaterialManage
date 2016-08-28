@@ -14,12 +14,23 @@ import com.litesuits.http.request.StringRequest;
 import com.litesuits.http.request.content.JsonBody;
 import com.litesuits.http.request.content.StringBody;
 import com.litesuits.http.request.param.HttpMethods;
+import com.litesuits.http.response.Response;
+import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper;
+import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
+import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
+import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.fragment.DistributionFragment;
+import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by alphonso on 2016/7/28.
@@ -34,6 +45,7 @@ public class HttpClient {
     public static final String LOGIN_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqUserLoginInfo";
     public static final String LOADING_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqLoadingInfo";
     public static final String UNLOADING_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqUnLoadingInfo";
+    public static final String DISTRI_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqDistriInfo";
 
     private HttpClient() {
         liteHttp = LiteHttp.build(null)
@@ -94,6 +106,50 @@ public class HttpClient {
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
 
         liteHttp.executeAsync(stringRequest);
+    }
+
+    public boolean getAllInfo(String date,String name){
+        JSONObject object = new JSONObject();
+        try {
+            object.put("date", date);
+            object.put("person", name);
+        } catch (JSONException e) {
+        }
+        LinkedHashMap<String, String> header = new LinkedHashMap<>();
+        header.put("contentType", "utf-8");
+        header.put("Content-type", "application/x-java-serialized-object");
+        StringRequest stringRequest = new StringRequest(LOADING_URL)
+                .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));
+        try {
+            Response<String> result = liteHttp.execute(stringRequest);
+            List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
+            if(ls.size()>0){
+                LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
+                loadingInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
+                loadingInfoDataHelper.bulkInsert(ls);
+            }
+            stringRequest.setUri(UNLOADING_URL);
+            result = liteHttp.execute(stringRequest);
+            List<UnLoadingInfo> lsa =Parser.parseUnLoadingInfo(result.getResult());
+            if(lsa.size()>0){
+                UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
+                unloadingInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
+                unloadingInfoDataHelper.bulkInsert(lsa);
+            }
+
+            stringRequest.setUri(DISTRI_URL);
+            result = liteHttp.execute(stringRequest);
+            Log.e("testcc",result.resToString());
+            List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
+            if(lsb.size()>0){
+                DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
+                distributionInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
+                distributionInfoDataHelper.bulkInsert(lsb);
+            }
+            return true;
+        }catch (Exception e) {
+            return false;
+        }
     }
 
 //    public void parse(HttpListener<String> listener, String content) {

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">zxingLibrary</string>
+    <string name="scan_right">条码正确</string>
+    <string name="scan_wrong">条码错误</string>
+</resources>

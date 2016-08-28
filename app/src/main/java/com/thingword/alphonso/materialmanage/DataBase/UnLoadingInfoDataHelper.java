@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
+import android.util.Log;
 
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
@@ -60,6 +61,17 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
 
     public CursorLoader getDateCursorLoader(String date) {
         return new CursorLoader(getContext(), getContentUri(), null, "cDate = ?",new String[]{date},null);
+    }
+
+    public boolean setDataChecked(String date ,String code){
+        ContentValues values = new ContentValues();
+        values.put("checked","true");
+        int count  = update(values,"cDate = ? and cBatch = ?",new String[]{date,code});
+        Log.e("testcc","checkDataValid "+count);
+        if(count == 0){
+            return  false;
+        }
+        return true;
     }
 
 }

@@ -13,4 +13,5 @@
     <color name="deepGray">#cccccc</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="textblack">#414141</color>
 </resources>
