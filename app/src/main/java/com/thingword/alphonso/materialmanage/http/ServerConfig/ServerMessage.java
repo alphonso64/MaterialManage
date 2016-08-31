@@ -9,4 +9,5 @@ public class ServerMessage {
     public final static String RETURN_SUCCESS = "success";
     public final static String RETURN_FAIL = "fail";
     public final static String RETURN_AUTH = "authority";
+    public final static String DATA = "data";
 }

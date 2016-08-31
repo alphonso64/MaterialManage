@@ -222,7 +222,7 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
             TextView tx = (TextView) materialDialog.getCustomView().findViewById(R.id.d_code);
             tx.setText(loadinfo.getcInvCode());
             tx = (TextView) materialDialog.getCustomView().findViewById(R.id.d_date);
-            tx.setText(loadinfo.getcDate());
+            tx.setText(loadinfo.getDate());
             final TextView batchtx = (TextView) materialDialog.getCustomView().findViewById(R.id.d_batch);
             batchtx.setText(String.format("%02d", batch));
             final TextView barcodetx = (TextView) materialDialog.getCustomView().findViewById(R.id.d_barcode);
@@ -279,7 +279,7 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
     private String generateBarcode(LoadingInfo info){
         StringBuilder sb = new StringBuilder();
         sb.append(info.getcInvCode());
-        sb.append(info.getcDate().replace("-","").substring(2));
+        sb.append(info.getDate().replace("-","").substring(2));
         sb.append(String.format("%02d", batch));
         return  sb.toString();
     }

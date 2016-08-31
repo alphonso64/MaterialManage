@@ -2,19 +2,32 @@ package com.thingword.alphonso.materialmanage.bean;
 
 import android.database.Cursor;
 
+import com.google.gson.annotations.Expose;
+
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 /**
  * Created by thingword-A on 2016/8/25.
  */
 public class LoadingInfo {
+    @Expose
     private String cBatch;
-    private String cDate;
+    @Expose
+    private String date;
+    @Expose
     private String iQuantity;
+    @Expose
     private String cInvStd;
+    @Expose
     private String cInvName;
+    @Expose
     private String cInvCode;
+
     private String checked;
+
+    public String printfInfo(){
+        return "cBatch:"+cBatch+" cDate:"+date+" iQuantity:"+iQuantity+" cInvStd:"+cInvStd+" cInvName:"+cInvName+" cInvCode:"+cInvCode+" checked:"+checked;
+    }
 
     public String getcInvCode() {
         return cInvCode;
@@ -61,13 +74,6 @@ public class LoadingInfo {
         return loadingInfo;
     }
 
-    public String getcDate() {
-        return cDate;
-    }
-
-    public void setcDate(String cDate) {
-        this.cDate = cDate;
-    }
 
     public String getChecked() {
         return checked;
@@ -75,5 +81,13 @@ public class LoadingInfo {
 
     public void setChecked(String checked) {
         this.checked = checked;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

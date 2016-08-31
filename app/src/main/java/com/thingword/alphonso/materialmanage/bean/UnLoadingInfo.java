@@ -9,7 +9,7 @@ import static nl.qbusict.cupboard.CupboardFactory.cupboard;
  */
 public class UnLoadingInfo {
     private String cBatch;
-    private String cDate;
+    private String date;
     private String iQuantity;
     private String cInvStd;
     private String cInvName;
@@ -64,14 +64,6 @@ public class UnLoadingInfo {
         return loadingInfo;
     }
 
-    public String getcDate() {
-        return cDate;
-    }
-
-    public void setcDate(String cDate) {
-        this.cDate = cDate;
-    }
-
     public String getcInvDefine8() {
         return cInvDefine8;
     }
@@ -102,5 +94,13 @@ public class UnLoadingInfo {
 
     public void setChecked(String checked) {
         this.checked = checked;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

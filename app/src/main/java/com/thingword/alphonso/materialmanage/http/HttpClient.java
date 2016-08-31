@@ -42,10 +42,10 @@ public class HttpClient {
     private static final String DOMAIN_NAME = "http://192.168.3.21:8089/";
 
     //登陆判断
-    public static final String LOGIN_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqUserLoginInfo";
-    public static final String LOADING_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqLoadingInfo";
-    public static final String UNLOADING_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqUnLoadingInfo";
-    public static final String DISTRI_URL = DOMAIN_NAME + "MaterialManage/rest/json/reqDistriInfo";
+    public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";
+    public static final String LOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqLoadingInfo";
+    public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfo";
+    public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
 
     private HttpClient() {
         liteHttp = LiteHttp.build(null)
@@ -116,16 +116,17 @@ public class HttpClient {
         } catch (JSONException e) {
         }
         LinkedHashMap<String, String> header = new LinkedHashMap<>();
-        header.put("contentType", "utf-8");
-        header.put("Content-type", "application/x-java-serialized-object");
+//        header.put("contentType", "utf-8");
+//        header.put("Content-type", "application/x-java-serialized-object");
         StringRequest stringRequest = new StringRequest(LOADING_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));
         try {
             Response<String> result = liteHttp.execute(stringRequest);
+
             List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
             if(ls.size()>0){
                 LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
-                loadingInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
+                loadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
                 loadingInfoDataHelper.bulkInsert(ls);
             }
             stringRequest.setUri(UNLOADING_URL);
@@ -133,17 +134,16 @@ public class HttpClient {
             List<UnLoadingInfo> lsa =Parser.parseUnLoadingInfo(result.getResult());
             if(lsa.size()>0){
                 UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
-                unloadingInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
+                unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
                 unloadingInfoDataHelper.bulkInsert(lsa);
             }
 
             stringRequest.setUri(DISTRI_URL);
             result = liteHttp.execute(stringRequest);
-            Log.e("testcc",result.resToString());
             List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
             if(lsb.size()>0){
                 DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
-                distributionInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
+                distributionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
                 distributionInfoDataHelper.bulkInsert(lsb);
             }
             return true;

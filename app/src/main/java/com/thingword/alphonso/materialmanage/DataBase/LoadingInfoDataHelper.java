@@ -71,7 +71,7 @@ public class LoadingInfoDataHelper extends BaseDataHelper implements BaseDBInter
 
 
     public CursorLoader getDateCursorLoader(String date) {
-        return new CursorLoader(getContext(), getContentUri(), null, "cDate = ?",new String[]{date},null);
+        return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);
     }
 
 //    public CursorLoader getEmptyCursorLoader() {

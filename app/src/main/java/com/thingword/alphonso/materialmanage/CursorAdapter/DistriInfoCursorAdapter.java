@@ -51,7 +51,7 @@ public class DistriInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<Re
         ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcBatch());
         ((CusViewHolder) holder).title_c2.setText(ld.getShopnum());
         ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
-        ((CusViewHolder) holder).title_d2.setText(ld.getcDate());
+        ((CusViewHolder) holder).title_d2.setText(ld.getDate());
     }
 
     @Override

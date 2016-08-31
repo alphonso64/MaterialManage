@@ -4,16 +4,20 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.litesuits.http.exception.HttpException;
 import com.litesuits.http.listener.HttpListener;
 import com.litesuits.http.response.Response;
 import com.thingword.alphonso.materialmanage.DataBase.DataProvider;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
+import com.thingword.alphonso.materialmanage.bean.ReturnLoginInfo;
+import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.ServerMessage;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
 
@@ -52,22 +56,17 @@ public class loginActivity extends AppCompatActivity {
         HttpListener listener =  new HttpListener<String>() {
             @Override
             public void onSuccess(String s, Response<String> response) {
-                try {
-                    JSONObject object = new JSONObject(s);
-                    String result = (String) object.get(ServerMessage.RETURN_CODE);
-                    String authortity = (String) object.get(ServerMessage.RETURN_AUTH);
-                    if(result.equals(ServerMessage.RETURN_SUCCESS)){
-                        UserSharedPreferences.setUser(loginActivity.this,name,authortity);
+                Gson gson = new Gson();
+                ReturnLoginInfo returnLoginInfo = gson.fromJson(s,ReturnLoginInfo.class);
+                if(ServerMessage.RETURN_SUCCESS.equals(returnLoginInfo.getReturn_code())){
+                        UserSharedPreferences.setUser(loginActivity.this,name,returnLoginInfo.getAuthority());
                         DataProvider.resetDBHelper();
                         loginJump();
-                    }else{
+                }else{
                         Toast toast = Toast.makeText(getApplicationContext(),
                                 R.string.logoin_fail, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
-                    }
-                } catch (JSONException e) {
-                    return;
                 }
             }
             @Override

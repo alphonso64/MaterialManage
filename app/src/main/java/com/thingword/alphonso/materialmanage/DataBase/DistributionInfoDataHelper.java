@@ -60,13 +60,13 @@ public class DistributionInfoDataHelper extends BaseDataHelper implements BaseDB
 
 
     public CursorLoader getDateCursorLoader(String date) {
-        return new CursorLoader(getContext(), getContentUri(), null, "cDate = ?",new String[]{date},null);
+        return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);
     }
 
     public boolean setDataChecked(String date ,String code){
         ContentValues values = new ContentValues();
         values.put("checked","true");
-        int count  = update(values,"cDate = ? and cBatch = ?",new String[]{date,code});
+        int count  = update(values,"date = ? and cBatch = ?",new String[]{date,code});
         Log.e("testcc","checkDataValid "+count);
         if(count == 0){
             return  false;

@@ -42,7 +42,7 @@ public class LoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<R
         ((CusViewHolder) holder).title_b.setText("规格:"+ld.getcInvStd());
         ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcInvCode());
         ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
-        ((CusViewHolder) holder).title_d2.setText(ld.getcDate());
+        ((CusViewHolder) holder).title_d2.setText(ld.getDate());
     }
 
     @Override

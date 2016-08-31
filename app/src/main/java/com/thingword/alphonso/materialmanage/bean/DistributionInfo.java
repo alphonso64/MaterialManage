@@ -9,7 +9,7 @@ import static nl.qbusict.cupboard.CupboardFactory.cupboard;
  */
 public class DistributionInfo {
     private String cBatch;
-    private String cDate;
+    private String date;
     private String iQuantity;
     private String cInvStd;
     private String cInvName;
@@ -65,14 +65,6 @@ public class DistributionInfo {
         return loadingInfo;
     }
 
-    public String getcDate() {
-        return cDate;
-    }
-
-    public void setcDate(String cDate) {
-        this.cDate = cDate;
-    }
-
     public String getChecked() {
         return checked;
     }
@@ -111,5 +103,13 @@ public class DistributionInfo {
 
     public void setCinvstd_1(String cinvstd_1) {
         this.cinvstd_1 = cinvstd_1;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }
