@@ -23,12 +23,18 @@ import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.fragment.DistributionFragment;
+import com.thingword.alphonso.materialmanage.fragment.LoadingFragment;
+import com.thingword.alphonso.materialmanage.fragment.ProduceLineFragment;
+import com.thingword.alphonso.materialmanage.fragment.TextFragment;
+import com.thingword.alphonso.materialmanage.fragment.UnloadingFragment;
+import com.thingword.alphonso.materialmanage.http.ServerConfig.Authority;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -46,6 +52,7 @@ public class HttpClient {
     public static final String LOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqLoadingInfo";
     public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfo";
     public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
+    public static final String UPDATE_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
 
     private HttpClient() {
         liteHttp = LiteHttp.build(null)
@@ -108,7 +115,8 @@ public class HttpClient {
         liteHttp.executeAsync(stringRequest);
     }
 
-    public boolean getAllInfo(String date,String name){
+    public List<String> getAllInfo(String date,String name,int authority){
+        List<String>  val = new ArrayList<>();
         JSONObject object = new JSONObject();
         try {
             object.put("date", date);
@@ -121,35 +129,56 @@ public class HttpClient {
         StringRequest stringRequest = new StringRequest(LOADING_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));
         try {
-            Response<String> result = liteHttp.execute(stringRequest);
+            Response<String> result;
 
-            List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
-            if(ls.size()>0){
-                LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
-                loadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                loadingInfoDataHelper.bulkInsert(ls);
-            }
-            stringRequest.setUri(UNLOADING_URL);
-            result = liteHttp.execute(stringRequest);
-            List<UnLoadingInfo> lsa =Parser.parseUnLoadingInfo(result.getResult());
-            if(lsa.size()>0){
-                UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
-                unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                unloadingInfoDataHelper.bulkInsert(lsa);
+            if((authority& Authority.LOADING_AUTHORITY)!=0){
+                result = liteHttp.execute(stringRequest);
+                List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
+                if(ls.size()>0){
+                    LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
+                    loadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+                    loadingInfoDataHelper.bulkInsert(ls);
+                }else{
+                    val.add("入库:"+Parser.getLoadingErr());
+                }
             }
 
-            stringRequest.setUri(DISTRI_URL);
-            result = liteHttp.execute(stringRequest);
-            List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
-            if(lsb.size()>0){
-                DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
-                distributionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                distributionInfoDataHelper.bulkInsert(lsb);
+            if((authority&Authority.UNLOADING_AUTHORITY) != 0){
+                stringRequest.setUri(UNLOADING_URL);
+                result = liteHttp.execute(stringRequest);
+                List<UnLoadingInfo> lsa =Parser.parseUnLoadingInfo(result.getResult());
+                if(lsa.size()>0){
+                    UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
+                    unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+                    unloadingInfoDataHelper.bulkInsert(lsa);
+                }else{
+                    val.add("出库:"+Parser.getUnloadingErr());
+                }
             }
-            return true;
+
+            if((authority&Authority.DISTRIBUTION_AUTHORITY)!= 0){
+                stringRequest.setUri(DISTRI_URL);
+                result = liteHttp.execute(stringRequest);
+                List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
+                if(lsb.size()>0){
+                    DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
+                    distributionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+                    distributionInfoDataHelper.bulkInsert(lsb);
+                }else{
+                    val.add("配料:"+Parser.getDistriErr());
+                }
+            }
+
+//            if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
+//               // mFragments.add(ProduceLineFragment.newInstance("产线"));
+//            }else{
+//                val.add(Parser.getProductionErr());
+//            }
+
         }catch (Exception e) {
-            return false;
+
         }
+        return val;
     }
 
 //    public void parse(HttpListener<String> listener, String content) {

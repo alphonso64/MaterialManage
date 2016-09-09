@@ -65,6 +65,10 @@ public class Parser {
 //        return null;
 //    }
 
+    private static String loadingErr;
+    private static String unloadingErr;
+    private static String distriErr;
+    private static String productionErr;
 
     public static List<LoadingInfo> parseLoadingInfo(String val) {
         List<LoadingInfo> ls = new ArrayList<>();
@@ -75,10 +79,12 @@ public class Parser {
                 JSONArray array = new JSONArray(object.getString(ServerMessage.DATA));
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
-                    LoadingInfo ld = gson.fromJson(array.getString(i),LoadingInfo.class);
+                    LoadingInfo ld = gson.fromJson(array.getString(i), LoadingInfo.class);
                     ld.setChecked("false");
                     ls.add(ld);
                 }
+            }else{
+                loadingErr = (String) object.get(ServerMessage.RETURN_MSG);
             }
         } catch (JSONException e) {
         }
@@ -94,10 +100,12 @@ public class Parser {
                 JSONArray array = new JSONArray(object.getString(ServerMessage.DATA));
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
-                    UnLoadingInfo ld = gson.fromJson(array.getString(i),UnLoadingInfo.class);
+                    UnLoadingInfo ld = gson.fromJson(array.getString(i), UnLoadingInfo.class);
                     ld.setChecked("false");
                     ls.add(ld);
                 }
+            }else{
+                unloadingErr = (String) object.get(ServerMessage.RETURN_MSG);
             }
         } catch (JSONException e) {
         }
@@ -114,13 +122,31 @@ public class Parser {
                 JSONArray array = new JSONArray(object.getString(ServerMessage.DATA));
                 for (int i = 0; i < array.length(); i++) {
                     Gson gson = new Gson();
-                    DistributionInfo ld = gson.fromJson(array.getString(i),DistributionInfo.class);
+                    DistributionInfo ld = gson.fromJson(array.getString(i), DistributionInfo.class);
                     ld.setChecked("false");
                     ls.add(ld);
                 }
+            }else{
+                distriErr = (String) object.get(ServerMessage.RETURN_MSG);
             }
         } catch (JSONException e) {
         }
         return ls;
+    }
+
+    public static String getLoadingErr() {
+        return loadingErr;
+    }
+
+    public static String getUnloadingErr() {
+        return unloadingErr;
+    }
+
+    public static String getDistriErr() {
+        return distriErr;
+    }
+
+    public static String getProductionErr() {
+        return productionErr;
     }
 }

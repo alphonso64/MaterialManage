@@ -19,7 +19,9 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.thingword.alphonso.materialmanage.http.HttpClient;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,10 +43,10 @@ import butterknife.Unbinder;
 /**
  * Created by WangChang on 2016/5/15.
  */
-public class SetFragment extends Fragment{
+public class SetFragment extends Fragment {
     private Unbinder unbinder;
     private Calendar calendar;
-    private  ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
     @BindView(R.id.set_toolbar)
     Toolbar toolbar;
 
@@ -52,11 +55,27 @@ public class SetFragment extends Fragment{
 
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what==0){
-                progressDialog.dismiss();
+            progressDialog.dismiss();
+            List<String> ls = (List<String>) msg.obj;
+            if (ls.size() == 0) {
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
+                        setTitle("数据更新成功").
+                        setPositiveButton("确定", null).
+                        create();
+                alertDialog.show();
+            }else{
+                ListAdapter adapter =  new ArrayAdapter<>(getActivity(),
+                        android.R.layout.simple_list_item_1,
+                        ls);
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
+                        setTitle("数据更新失败").
+                        setPositiveButton("确定", null).setAdapter(adapter,null).
+                        create();
+                alertDialog.show();
             }
         }
     };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,13 +106,13 @@ public class SetFragment extends Fragment{
     }
 
     @OnClick(R.id.ly_quit)
-    public void quitClick(){
+    public void quitClick() {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
                 setTitle("确定退出登录？").
                 setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UserSharedPreferences.setLogged(getActivity(),false);
+                        UserSharedPreferences.setLogged(getActivity(), false);
                         getActivity().finish();
                     }
                 }).
@@ -103,7 +122,8 @@ public class SetFragment extends Fragment{
     }
 
     @OnClick(R.id.ly_updatedata)
-    public void updatedataClick(){
+    public void updatedataClick() {
+        final int authotity = Integer.valueOf(UserSharedPreferences.getCusUser(getActivity()).getAuthority());
         MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
                 .customView(R.layout.dialog_unload_calendar, true)
                 .positiveText(R.string.sure)
@@ -121,13 +141,15 @@ public class SetFragment extends Fragment{
                         progressDialog.setIndeterminate(false);
                         progressDialog.setCancelable(true);
                         progressDialog.show();
-                        new Thread(){
-
+                        new Thread() {
                             @Override
                             public void run() {
-                                HttpClient.getInstance().getAllInfo(date,person);
-                                mHandler.sendEmptyMessage(0);
-                            }}.start();
+                                List<String> val = HttpClient.getInstance().getAllInfo(date, person, authotity);
+                                Message message = mHandler.obtainMessage();
+                                message.obj = val;
+                                mHandler.sendMessage(message);
+                            }
+                        }.start();
                     }
                 })
                 .negativeText(R.string.cancle).build();

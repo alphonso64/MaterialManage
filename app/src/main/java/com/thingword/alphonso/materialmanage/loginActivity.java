@@ -56,6 +56,7 @@ public class loginActivity extends AppCompatActivity {
         HttpListener listener =  new HttpListener<String>() {
             @Override
             public void onSuccess(String s, Response<String> response) {
+                Log.e("testcc",s);
                 Gson gson = new Gson();
                 ReturnLoginInfo returnLoginInfo = gson.fromJson(s,ReturnLoginInfo.class);
                 if(ServerMessage.RETURN_SUCCESS.equals(returnLoginInfo.getReturn_code())){
