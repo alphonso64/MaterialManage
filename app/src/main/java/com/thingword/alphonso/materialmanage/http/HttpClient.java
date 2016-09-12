@@ -17,10 +17,12 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
+import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.fragment.DistributionFragment;
 import com.thingword.alphonso.materialmanage.fragment.LoadingFragment;
@@ -52,7 +54,7 @@ public class HttpClient {
     public static final String LOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqLoadingInfo";
     public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfo";
     public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
-    public static final String UPDATE_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
+    public static final String PRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfo";
 
     private HttpClient() {
         liteHttp = LiteHttp.build(null)
@@ -169,11 +171,18 @@ public class HttpClient {
                 }
             }
 
-//            if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
-//               // mFragments.add(ProduceLineFragment.newInstance("产线"));
-//            }else{
-//                val.add(Parser.getProductionErr());
-//            }
+            if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
+                stringRequest.setUri(PRODUCTION_URL);
+                result = liteHttp.execute(stringRequest);
+                List<ProductionInfo> lsc =Parser.parseProductionInfo(result.getResult());
+                if(lsc.size()>0){
+                    ProductionInfoDataHelper productionInfoDataHelper = new ProductionInfoDataHelper(MApplication.getContext());
+                    productionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+                    productionInfoDataHelper.bulkInsert(lsc);
+                }else{
+                    val.add("产线:"+Parser.getProductionErr());
+                }
+            }
 
         }catch (Exception e) {
 

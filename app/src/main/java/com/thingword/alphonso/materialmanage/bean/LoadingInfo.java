@@ -25,8 +25,8 @@ public class LoadingInfo {
 
     private String checked;
 
-    public String printfInfo(){
-        return "cBatch:"+cBatch+" cDate:"+date+" iQuantity:"+iQuantity+" cInvStd:"+cInvStd+" cInvName:"+cInvName+" cInvCode:"+cInvCode+" checked:"+checked;
+    public String printfInfo() {
+        return "cBatch:" + cBatch + " cDate:" + date + " iQuantity:" + iQuantity + " cInvStd:" + cInvStd + " cInvName:" + cInvName + " cInvCode:" + cInvCode + " checked:" + checked;
     }
 
     public String getcInvCode() {
@@ -70,7 +70,7 @@ public class LoadingInfo {
     }
 
     public static LoadingInfo fromCursor(Cursor cursor) {
-        LoadingInfo loadingInfo= cupboard().withCursor(cursor).get(LoadingInfo.class);
+        LoadingInfo loadingInfo = cupboard().withCursor(cursor).get(LoadingInfo.class);
         return loadingInfo;
     }
 
