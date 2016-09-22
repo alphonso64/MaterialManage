@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.ProductDetail;
 import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
 import com.thingword.alphonso.materialmanage.bean.ReturnData;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
@@ -149,6 +150,25 @@ public class Parser {
                 }
             }else{
                 productionErr = (String) object.get(ServerMessage.RETURN_MSG);
+            }
+        } catch (JSONException e) {
+        }
+        return ls;
+    }
+
+    public static List<ProductDetail> parseProductionDetail(String val) {
+        List<ProductDetail> ls = new ArrayList<>();
+        try {
+            JSONObject object = new JSONObject(val);
+            String result = (String) object.get(ServerMessage.RETURN_CODE);
+            if (result.equals(ServerMessage.RETURN_SUCCESS)) {
+                JSONArray array = new JSONArray(object.getString(ServerMessage.DATA));
+                for (int i = 0; i < array.length(); i++) {
+                    Gson gson = new Gson();
+                    ProductDetail ld = gson.fromJson(array.getString(i), ProductDetail.class);
+                    ld.setChecked("false");
+                    ls.add(ld);
+                }
             }
         } catch (JSONException e) {
         }

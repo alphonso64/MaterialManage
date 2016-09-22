@@ -15,13 +15,15 @@ import com.thingword.alphonso.materialmanage.bean.User;
 public class UserSharedPreferences {
 
 
-    public static void setUser(Context ctx, String user,String authority) {
+    public static void setUser(Context ctx, User user) {
         SharedPreferences sp = ctx.getSharedPreferences(SYSConfigure.LOGIN_DB,
                 Activity.MODE_PRIVATE);
         SharedPreferences.Editor ed = sp.edit();
         ed.putString(SYSConfigure.LOGIN_DB_COLB, SYSConfigure.HAS_LOGED);
-        ed.putString(SYSConfigure.LOGIN_DB_COLA, user);
-        ed.putString(SYSConfigure.LOGIN_DB_COLC, authority);
+        ed.putString(SYSConfigure.LOGIN_DB_COLA, user.getUsername());
+        ed.putString(SYSConfigure.LOGIN_DB_COLC, user.getAuthority());
+        ed.putString(SYSConfigure.LOGIN_DB_COLD, user.getEmploy_name());
+        ed.putString(SYSConfigure.LOGIN_DB_COLE, user.getEmploy_code());
         ed.commit();
     }
 
@@ -31,8 +33,12 @@ public class UserSharedPreferences {
                 Activity.MODE_PRIVATE);
         String name = sp.getString(SYSConfigure.LOGIN_DB_COLA, null);
         String authortity = sp.getString(SYSConfigure.LOGIN_DB_COLC, null);
+        String e_name = sp.getString(SYSConfigure.LOGIN_DB_COLD, null);
+        String e_code = sp.getString(SYSConfigure.LOGIN_DB_COLE, null);
         user.setUsername(name);
         user.setAuthority(authortity);
+        user.setEmploy_name(e_name);
+        user.setEmploy_code(e_code);
         return user;
     }
 

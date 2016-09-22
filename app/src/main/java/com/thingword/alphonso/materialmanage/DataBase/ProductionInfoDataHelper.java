@@ -2,6 +2,7 @@ package com.thingword.alphonso.materialmanage.DataBase;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
@@ -58,6 +59,13 @@ public class ProductionInfoDataHelper extends BaseDataHelper implements BaseDBIn
         return new CursorLoader(getContext(), getContentUri(), null, null, null, null);
     }
 
+    public Cursor getCursor_() {
+        return query(getContentUri(), null, null, null, null);
+    }
+
+    public Cursor getDateCursor(String date) {
+        return query(getContentUri(), null, "date = ?",new String[]{date}, null);
+    }
 
     public CursorLoader getDateCursorLoader(String date) {
         return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);

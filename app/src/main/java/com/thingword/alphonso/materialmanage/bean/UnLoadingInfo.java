@@ -17,6 +17,7 @@ public class UnLoadingInfo {
     private String cInvDefine8;
     private String invcode;
     private String shopnum;
+    private String linenum;
     private String checked;
 
     public String getcInvCode() {
@@ -102,5 +103,13 @@ public class UnLoadingInfo {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getLinenum() {
+        return linenum;
+    }
+
+    public void setLinenum(String linenum) {
+        this.linenum = linenum;
     }
 }

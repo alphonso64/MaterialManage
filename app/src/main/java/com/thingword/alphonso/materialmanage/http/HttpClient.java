@@ -17,11 +17,13 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
+import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.ProductDetail;
 import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.fragment.DistributionFragment;
@@ -47,7 +49,7 @@ public class HttpClient {
     private LiteHttp liteHttp;
     private static HttpClient single = null;
 
-    private static final String DOMAIN_NAME = "http://192.168.3.21:8089/";
+    private static final String DOMAIN_NAME ="http://192.168.1.104:8089/"; //"http://192.200.5.194:8089/";
 
     //登陆判断
     public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";
@@ -55,6 +57,7 @@ public class HttpClient {
     public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfo";
     public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
     public static final String PRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfo";
+    public static final String PRODUCTIONDETAIL_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfoDetail";
 
     private HttpClient() {
         liteHttp = LiteHttp.build(null)
@@ -117,12 +120,13 @@ public class HttpClient {
         liteHttp.executeAsync(stringRequest);
     }
 
-    public List<String> getAllInfo(String date,String name,int authority){
+    public List<String> getAllInfo(String date,String name,String linenum,int authority){
         List<String>  val = new ArrayList<>();
         JSONObject object = new JSONObject();
         try {
             object.put("date", date);
             object.put("person", name);
+            object.put("linenum",linenum);
         } catch (JSONException e) {
         }
         LinkedHashMap<String, String> header = new LinkedHashMap<>();
@@ -182,6 +186,16 @@ public class HttpClient {
                 }else{
                     val.add("产线:"+Parser.getProductionErr());
                 }
+
+                stringRequest.setUri(PRODUCTIONDETAIL_URL);
+                result = liteHttp.execute(stringRequest);
+                List<ProductDetail> lsd =Parser.parseProductionDetail(result.getResult());
+                if(lsd.size()>0){
+                    ProductDetailDataHelper productDetailDataHelper = new ProductDetailDataHelper(MApplication.getContext());
+                    productDetailDataHelper.deleteByCondition("date = ?", new String[]{date});
+                    productDetailDataHelper.bulkInsert(lsd);
+                }
+//                Log.e("testcc","parseProductionDetail:"+lsd.size());
             }
 
         }catch (Exception e) {

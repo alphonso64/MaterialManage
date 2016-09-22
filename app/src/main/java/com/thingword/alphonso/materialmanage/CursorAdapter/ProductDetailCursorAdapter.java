@@ -11,17 +11,18 @@ import android.widget.TextView;
 
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.ProductDetail;
+import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
 
 
-public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<RecyclerView.ViewHolder> {
+public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter<RecyclerView.ViewHolder> {
     private Context context;
 
-    public UnLoadingInfoCursorAdapter(Context context) {
+    public ProductDetailCursorAdapter(Context context) {
         super(context, null);
         this.context = context;
     }
-
+    
     private OnAdpaterItemClickListener onItemClickListener = null;
 
     public void setOnItemClickListener(OnAdpaterItemClickListener onItemClickListener) {
@@ -30,7 +31,7 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
-        UnLoadingInfo ld = UnLoadingInfo.fromCursor(cursor);
+        ProductDetail ld = ProductDetail.fromCursor(cursor);
         if(ld.getChecked().equals("true")){
             ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
@@ -46,12 +47,11 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
             ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
         }
-        ((CusViewHolder) holder).title_a.setText("名称:"+ld.getcInvName());
-        ((CusViewHolder) holder).title_b.setText("位置:"+ld.getcInvDefine8());
-        ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcBatch());
-        ((CusViewHolder) holder).title_c2.setText(ld.getShopnum()+"/"+ld.getLinenum());
-        ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
-        ((CusViewHolder) holder).title_d2.setText(ld.getDate());
+        ((CusViewHolder) holder).title_a.setText("名称:"+ld.getInvname());
+        ((CusViewHolder) holder).title_b.setText("规格:"+ld.getInvstd());
+        ((CusViewHolder) holder).title_c1.setText("条码:"+ld.getInvcode());
+        ((CusViewHolder) holder).title_d1.setText(ld.getDefine28());
+        ((CusViewHolder) holder).title_d2.setText(ld.getLinenum());
     }
 
     @Override
@@ -68,8 +68,8 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
         TextView title_c2;
         TextView title_d1;
         TextView title_d2;
-        UnLoadingInfoCursorAdapter mAdapter;
-        public CusViewHolder(View itemView, UnLoadingInfoCursorAdapter adapter) {
+        ProductDetailCursorAdapter mAdapter;
+        public CusViewHolder(View itemView, ProductDetailCursorAdapter adapter) {
             super(itemView);
             title_a = (TextView) itemView.findViewById(R.id.cv_title_a);
             title_b = (TextView) itemView.findViewById(R.id.cv_title_b);
@@ -77,6 +77,7 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
             title_c2 = (TextView) itemView.findViewById(R.id.cv_title_c2);
             title_d1 = (TextView) itemView.findViewById(R.id.cv_title_d1);
             title_d2 = (TextView) itemView.findViewById(R.id.cv_title_d2);
+            title_c2.setVisibility(View.GONE);
             mAdapter = adapter;
             CardView cv = (CardView) itemView.findViewById(R.id.cv_ld);
             cv.setOnClickListener(new View.OnClickListener() {
@@ -84,9 +85,9 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
                 public void onClick(View v) {
                     Cursor cursor = (Cursor) mAdapter.getItem(getAdapterPosition());
 
-                    UnLoadingInfo unLoadingInfo = UnLoadingInfo.fromCursor(cursor);
+                    ProductDetail productDetail = ProductDetail.fromCursor(cursor);
                     if(mAdapter.onItemClickListener!=null){
-                        mAdapter.onItemClickListener.onItemClick(unLoadingInfo,getAdapterPosition());
+                        mAdapter.onItemClickListener.onItemClick(productDetail,getAdapterPosition());
                     }
                 }
             });

@@ -3,6 +3,8 @@ package com.thingword.alphonso.materialmanage.bean;
 public class ReturnLoginInfo {
     private String return_msg;
     private String return_code;
+    private String employ_name;
+    private String employ_code;
     private String authority;
 
     public String getReturn_msg() {
@@ -27,5 +29,21 @@ public class ReturnLoginInfo {
 
     public void setAuthority(String authority) {
         this.authority = authority;
+    }
+
+    public String getEmploy_name() {
+        return employ_name;
+    }
+
+    public void setEmploy_name(String employ_name) {
+        this.employ_name = employ_name;
+    }
+
+    public String getEmploy_code() {
+        return employ_code;
+    }
+
+    public void setEmploy_code(String employ_code) {
+        this.employ_code = employ_code;
     }
 }

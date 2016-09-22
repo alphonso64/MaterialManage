@@ -134,6 +134,8 @@ public class SetFragment extends Fragment {
                         final String date = simpleDateFormat.format(calendar.getTime());
                         TextView tx = (TextView) dialog.getCustomView().findViewById(R.id.excutor);
                         final String person = tx.getText().toString();
+                        tx = (TextView) dialog.getCustomView().findViewById(R.id.linenum);
+                        final String linenum = tx.getText().toString();
 
                         progressDialog = new ProgressDialog(getActivity());
                         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -144,7 +146,7 @@ public class SetFragment extends Fragment {
                         new Thread() {
                             @Override
                             public void run() {
-                                List<String> val = HttpClient.getInstance().getAllInfo(date, person, authotity);
+                                List<String> val = HttpClient.getInstance().getAllInfo(date, person, linenum,authotity);
                                 Message message = mHandler.obtainMessage();
                                 message.obj = val;
                                 mHandler.sendMessage(message);
@@ -154,7 +156,9 @@ public class SetFragment extends Fragment {
                 })
                 .negativeText(R.string.cancle).build();
         TextView tx = (TextView) materialDialog.getCustomView().findViewById(R.id.excutor);
-        tx.setText(UserSharedPreferences.getCusUser(getActivity()).getUsername());
+        tx.setText(UserSharedPreferences.getCusUser(getActivity()).getEmploy_name());
+        tx = (TextView) materialDialog.getCustomView().findViewById(R.id.linenum);
+        tx.setText(UserSharedPreferences.getCusUser(getActivity()).getEmploy_code());
         CalendarView cv = (CalendarView) materialDialog.getCustomView().findViewById(R.id.unload_calendarView);
         calendar = Calendar.getInstance();
         cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {

@@ -8,6 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,19 +23,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
 import android.widget.CompoundButton;
+import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.thingword.alphonso.materialmanage.CursorAdapter.LoadingInfoCursorAdapter;
+import com.thingword.alphonso.materialmanage.CursorAdapter.OnAdpaterItemClickListener;
+import com.thingword.alphonso.materialmanage.CursorAdapter.ProductDetailCursorAdapter;
+import com.thingword.alphonso.materialmanage.CursorAdapter.ProductRecylerViewCusorAdapter;
 import com.thingword.alphonso.materialmanage.CursorAdapter.ProductionInfoCursorAdapter;
 import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
+import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
+import com.thingword.alphonso.materialmanage.ProductionScanCamActivity;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ReloadingScanActivity;
 import com.thingword.alphonso.materialmanage.ScanCamActivity;
+import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,16 +55,19 @@ import butterknife.Unbinder;
 /**
  * Created by WangChang on 2016/5/15.
  */
-public class ProduceLineFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class ProduceLineFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private Unbinder unbinder;
     @BindView(R.id.productLine_toolbar)
     Toolbar toolbar;
     @BindView(R.id.productLine_recyclerview)
     RecyclerView mRecyclerView;
 
-    private ProductionInfoDataHelper mDataHelper;
-    private ProductionInfoCursorAdapter mAdapter;
+    private ProductDetailDataHelper mDataHelper;
+    private ProductDetailCursorAdapter mAdapter;
+    private Cursor  mPrudctionCursor;
+    private ProductionInfoDataHelper mPrudctionAdapter;
     private Calendar calendar;
+    private ProductionInfo productionInfo;
     private static final int DATE_LIST = 1;
 
     @Nullable
@@ -61,7 +75,8 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_producline, container, false);
         unbinder = ButterKnife.bind(this, view);
-        toolbar.setTitle(R.string.tab_line);;
+        toolbar.setTitle(R.string.tab_line);
+        ;
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.menu_line);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -74,6 +89,20 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     case R.id.line_reloading:
                         Intent intent = new Intent(getActivity(), ReloadingScanActivity.class);
                         startActivity(intent);
+                        break;
+                    case R.id.line_cam:
+                        if(productionInfo != null){
+                            MApplication app = (MApplication) getActivity().getApplication();
+                            app.setProductionInfo(productionInfo);
+                             intent = new Intent(getActivity(), ProductionScanCamActivity.class);
+                            startActivity(intent);
+                        }else{
+                            android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity()).
+                                    setTitle("请添加工作列表").
+                                    setPositiveButton("确定",null)
+                                    .create();
+                            alertDialog.show();
+                        }
                         break;
                     default:
                 }
@@ -93,15 +122,15 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mDataHelper = new ProductionInfoDataHelper(getActivity());
-        mAdapter = new ProductionInfoCursorAdapter(getActivity());
+        mDataHelper = new ProductDetailDataHelper(getActivity());
+        mAdapter = new ProductDetailCursorAdapter(getActivity());
         //mAdapter.setOnItemClickListener(itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private void loadDiag() {
-        MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
+        final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
                 .customView(R.layout.dialog_production_calendar, true)
                 .positiveText(R.string.sure)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -109,8 +138,22 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         String date = simpleDateFormat.format(calendar.getTime());
-                        Log.e("testcc","date:"+date);
-                        getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
+//                        Log.e("testcc","date:"+date);
+//                        getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
+                        mPrudctionAdapter = new ProductionInfoDataHelper(getActivity());
+                        mPrudctionCursor = mPrudctionAdapter.getDateCursor(date);
+                        ProductRecylerViewCusorAdapter adapter = new ProductRecylerViewCusorAdapter(ProductionInfo.class, mPrudctionCursor,getContext());
+                        adapter.setOnItemClickListener(new OnAdpaterItemClickListener() {
+
+                            @Override
+                            public void onItemClick(Object obj, int p) {
+                                productionInfo = (ProductionInfo)obj;
+                                getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
+                            }
+                        });
+                        MaterialDialog materialDialogiiner = new MaterialDialog.Builder(getActivity()).title("选择待换线产品").adapter(adapter,null).positiveText("确定")
+                                .build();
+                        materialDialogiiner.show();
                     }
                 })
                 .negativeText(R.string.cancle).build();
@@ -139,7 +182,8 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
         if (id == DATE_LIST) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String date = simpleDateFormat.format(calendar.getTime());
-            return mDataHelper.getDateCursorLoader(date);
+            //return  mDataHelper.getDateCursorLoader(date);
+            return mDataHelper.getDetailCursorLoader(date,productionInfo.getTasknumber(),productionInfo.getProductcode());
         }
         return null;
     }

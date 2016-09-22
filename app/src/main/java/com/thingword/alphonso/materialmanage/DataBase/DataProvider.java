@@ -17,6 +17,7 @@ import android.util.Log;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.ProductDetail;
 import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
 import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
@@ -32,21 +33,25 @@ public class DataProvider extends ContentProvider {
     private static final int UNLOADING_TABLE = 2;
     private static final int DISTRIBUTION_TABLE = 3;
     private static final int PRODUCTION_TABLE = 4;
+    private static final int PRODUCDETAIL_TABLE = 5;
 
     public static final String PATH_LOADING_TABLE = "/loadinginfo";
     public static final String PATH_UNLOADING_TABLE = "/unloadinginfo";
     public static final String PATH_DISTRIBUTION_TABLE = "/distributioninfo";
     public static final String PATH_PRODUCTION_TABLE = "/productioninfo";
+    public static final String PATH_PRODUCDETAIL_TABLE = "/productdetail";
 
     public static final Uri LOADING_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_LOADING_TABLE);
     public static final Uri UNLOADING_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_UNLOADING_TABLE);
     public static final Uri DISTRIBUTION_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_DISTRIBUTION_TABLE);
     public static final Uri PRODUCTION_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_PRODUCTION_TABLE);
+    public static final Uri PRODUCDETAIL_TABLE_CONTENT_URI = Uri.parse(SCHEME + AUTHORITY + PATH_PRODUCDETAIL_TABLE);
 
     public static final String LOADING_TABLE_CONTENT_TYPE = "com.task.loading";
     public static final String UNLOADING_TABLE_CONTENT_TYPE = "com.task.unloading";
     public static final String DISTRIBUTION_TABLE_CONTENT_TYPE = "com.task.distribution";
     public static final String PRODUCTION_TABLE_CONTENT_TYPE = "com.task.production";
+    public static final String PRODUCDETAIL_TABLE_CONTENT_TYPE = "com.task.productdetail";
 
     private static CupboardDBHelper mDBHelper;
 
@@ -55,6 +60,7 @@ public class DataProvider extends ContentProvider {
         addURI(AUTHORITY, "unloadinginfo", UNLOADING_TABLE);
         addURI(AUTHORITY, "distributioninfo", DISTRIBUTION_TABLE);
         addURI(AUTHORITY, "productioninfo", PRODUCTION_TABLE);
+        addURI(AUTHORITY, "productdetail", PRODUCDETAIL_TABLE);
     }};
 
     public static CupboardDBHelper getDBHelper() {
@@ -114,6 +120,14 @@ public class DataProvider extends ContentProvider {
                             getCursor();
                     cursor.setNotificationUri(getContext().getContentResolver(), uri);
                     break;
+                case PRODUCDETAIL_TABLE://Demo列表
+                    cursor = cupboard().withDatabase(db).query(ProductDetail.class).
+                            withProjection(projection).
+                            withSelection(selection, selectionArgs).
+                            orderBy(sortOrder).
+                            getCursor();
+                    cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown Uri" + uri);
             }
@@ -137,6 +151,9 @@ public class DataProvider extends ContentProvider {
             case PRODUCTION_TABLE:
                 table = ProductionInfoDataHelper.TABLE_NAME;
                 break;
+            case PRODUCDETAIL_TABLE:
+                table = ProductDetailDataHelper.TABLE_NAME;
+                break;
             default:
                 throw new IllegalArgumentException("Unknown Uri" + uri);
         }
@@ -154,6 +171,8 @@ public class DataProvider extends ContentProvider {
                 return DISTRIBUTION_TABLE_CONTENT_TYPE;
             case PRODUCTION_TABLE:
                 return PRODUCTION_TABLE_CONTENT_TYPE;
+            case PRODUCDETAIL_TABLE:
+                return PRODUCDETAIL_TABLE_CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown Uri" + uri);
         }

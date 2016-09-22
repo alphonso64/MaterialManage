@@ -43,33 +43,39 @@ public class loginActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.loginbutton)
-    void OnLogin(){
+    void OnLogin() {
         final String name = nameText.getEditableText().toString();
         String pwd = pwdText.getText().toString();
-        if(TextUtils.isEmpty(name) || TextUtils.isEmpty(pwd)){
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(pwd)) {
             Toast toast = Toast.makeText(getApplicationContext(),
                     R.string.logoin_empty_hint, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             return;
         }
-        HttpListener listener =  new HttpListener<String>() {
+        HttpListener listener = new HttpListener<String>() {
             @Override
             public void onSuccess(String s, Response<String> response) {
-                Log.e("testcc",s);
+                Log.e("testcc", s);
                 Gson gson = new Gson();
-                ReturnLoginInfo returnLoginInfo = gson.fromJson(s,ReturnLoginInfo.class);
-                if(ServerMessage.RETURN_SUCCESS.equals(returnLoginInfo.getReturn_code())){
-                        UserSharedPreferences.setUser(loginActivity.this,name,returnLoginInfo.getAuthority());
-                        DataProvider.resetDBHelper();
-                        loginJump();
-                }else{
-                        Toast toast = Toast.makeText(getApplicationContext(),
-                                R.string.logoin_fail, Toast.LENGTH_SHORT);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.show();
+                ReturnLoginInfo returnLoginInfo = gson.fromJson(s, ReturnLoginInfo.class);
+                if (ServerMessage.RETURN_SUCCESS.equals(returnLoginInfo.getReturn_code())) {
+                    User user = new User();
+                    user.setEmploy_name(returnLoginInfo.getEmploy_name());
+                    user.setEmploy_code(returnLoginInfo.getEmploy_code());
+                    user.setUsername(name);
+                    user.setAuthority(returnLoginInfo.getAuthority());
+                    UserSharedPreferences.setUser(loginActivity.this, user);
+                    DataProvider.resetDBHelper();
+                    loginJump();
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            R.string.logoin_fail, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
                 }
             }
+
             @Override
             public void onFailure(HttpException e, Response<String> response) {
                 Toast toast = Toast.makeText(getApplicationContext(),
@@ -78,17 +84,17 @@ public class loginActivity extends AppCompatActivity {
                 toast.show();
             }
         };
-        HttpClient.getInstance().checkLogin(listener,name,pwd);
+        HttpClient.getInstance().checkLogin(listener, name, pwd);
     }
 
-    public void loginJump(){
+    public void loginJump() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public void checkLogin(){
-        if(UserSharedPreferences.isLogged(this)){
+    public void checkLogin() {
+        if (UserSharedPreferences.isLogged(this)) {
             loginJump();
         }
     }

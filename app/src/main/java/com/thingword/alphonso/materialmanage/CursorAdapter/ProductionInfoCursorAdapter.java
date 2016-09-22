@@ -73,9 +73,9 @@ public class ProductionInfoCursorAdapter extends BaseAbstractRecycleCursorAdapte
                 public void onClick(View v) {
                     Cursor cursor = (Cursor) mAdapter.getItem(getAdapterPosition());
 
-                    LoadingInfo planterRecord = LoadingInfo.fromCursor(cursor);
+                    ProductionInfo productionInfo = ProductionInfo.fromCursor(cursor);
                     if(mAdapter.onItemClickListener!=null){
-                        mAdapter.onItemClickListener.onItemClick(planterRecord,getAdapterPosition());
+                        mAdapter.onItemClickListener.onItemClick(productionInfo,getAdapterPosition());
                     }
                 }
             });

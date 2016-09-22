@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".ReloadingScanActivity">
         </activity>
+        <activity android:name=".ProductionScanCamActivity">
+        </activity>
         <provider
             android:name=".DataBase.DataProvider"
             android:authorities="com.thingword.mam"
