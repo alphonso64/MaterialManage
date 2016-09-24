@@ -66,6 +66,8 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
 
     private static final int DATE_LIST = 1;
     private Calendar calendar;
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,7 +87,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                         getLoaderManager().destroyLoader(DATE_LIST);
                         break;
                     case R.id.unload_cam:
-                        if(calendar != null){
+                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
                             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                             String date = simpleDateFormat.format(calendar.getTime());
                             MApplication app = (MApplication) getActivity().getApplication();
@@ -94,7 +96,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                             startActivity(intent);
                         }else{
                             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
-                                    setTitle("请添加工作列表").
+                                    setTitle("工作列表不能为空").
                                     setPositiveButton("确定",null)
                                     .create();
                             alertDialog.show();

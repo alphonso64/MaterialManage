@@ -34,6 +34,8 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
         if(ld.getChecked().equals("true")){
             ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.colorGray));
@@ -41,22 +43,31 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
         }else{
             ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
         }
         ((CusViewHolder) holder).title_a.setText("名称:"+ld.getcInvName());
-        ((CusViewHolder) holder).title_b.setText("位置:"+ld.getcInvDefine8());
-        ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcBatch());
-        ((CusViewHolder) holder).title_c2.setText(ld.getShopnum()+"/"+ld.getLinenum());
+        ((CusViewHolder) holder).title_b.setText("物料编码:"+ld.getcBatch());
+        ((CusViewHolder) holder).title_aa.setText("任务单号:");
+        ((CusViewHolder) holder).title_ab.setText("产品编码:"+ld.getInvcode());
+        ((CusViewHolder) holder).title_c1.setText("位置:"+ld.getcInvDefine8());
+
+        if(ld.getShopnum().equals("一车间")){
+            ((CusViewHolder) holder).title_c2.setText(ld.getShopnum());
+        }else{
+            ((CusViewHolder) holder).title_c2.setText(ld.getLinenum());
+        }
         ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
         ((CusViewHolder) holder).title_d2.setText(ld.getDate());
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(context).inflate(R.layout.cardview_loadinfo_item,parent,false);
+        View v= LayoutInflater.from(context).inflate(R.layout.cardview_unloadinfo_item,parent,false);
         CusViewHolder bvh=new CusViewHolder(v,this);
         return bvh;
     }
@@ -64,6 +75,8 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
     public static class CusViewHolder extends RecyclerView.ViewHolder {
         TextView title_a;
         TextView title_b;
+        TextView title_aa;
+        TextView title_ab;
         TextView title_c1;
         TextView title_c2;
         TextView title_d1;
@@ -73,6 +86,8 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
             super(itemView);
             title_a = (TextView) itemView.findViewById(R.id.cv_title_a);
             title_b = (TextView) itemView.findViewById(R.id.cv_title_b);
+            title_aa = (TextView) itemView.findViewById(R.id.cv_title_aa);
+            title_ab = (TextView) itemView.findViewById(R.id.cv_title_ab);
             title_c1 = (TextView) itemView.findViewById(R.id.cv_title_c1);
             title_c2 = (TextView) itemView.findViewById(R.id.cv_title_c2);
             title_d1 = (TextView) itemView.findViewById(R.id.cv_title_d1);

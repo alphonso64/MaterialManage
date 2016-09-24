@@ -1,5 +1,6 @@
 package com.thingword.alphonso.materialmanage.fragment;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,7 +43,9 @@ import com.thingword.alphonso.materialmanage.CursorAdapter.OnAdpaterItemClickLis
 import com.thingword.alphonso.materialmanage.DataBase.DataProvider;
 import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
+import com.thingword.alphonso.materialmanage.LoadScanCamActivity;
 import com.thingword.alphonso.materialmanage.R;
+import com.thingword.alphonso.materialmanage.ScanCamActivity;
 import com.thingword.alphonso.materialmanage.Util.BarCodeCreator;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
@@ -81,6 +86,7 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
     private int printminNum = 1;
     private int batchmaxNum = 99;
     private int batchminNum = 0;
+    private String printt_batch;
 
     @Nullable
     @Override
@@ -90,34 +96,51 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
         unbinder = ButterKnife.bind(this, view);
         toolbar.setTitle(R.string.tab_loading);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        toolbar.inflateMenu(R.menu.menu_loading);
+//        toolbar.inflateMenu(R.menu.menu_loading);
+//        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.load_add:
+//                        loadDiag();
+//                        break;
+//                    case R.id.load_clear:
+//                        getLoaderManager().destroyLoader(DATE_LIST);
+//                        break;
+//                    default:
+//                }
+//                return false;
+//            }
+//        });
+//        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
+        toolbar.inflateMenu(R.menu.menu_loading_temp);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.load_add:
-                        loadDiag();
+                    case R.id.load_cam_printer:
+                        Intent intent = new Intent(getActivity(), LoadScanCamActivity.class);
+                        startActivity(intent);
                         break;
-                    case R.id.load_clear:
-                        getLoaderManager().destroyLoader(DATE_LIST);
+                    case R.id.load_printer:
+                        loadTempDialog();
                         break;
                     default:
                 }
                 return false;
             }
         });
-        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mDataHelper = new LoadingInfoDataHelper(getActivity());
-        mAdapter = new LoadingInfoCursorAdapter(getActivity());
-        mAdapter.setOnItemClickListener(itemClickListener);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(mAdapter);
+//        mDataHelper = new LoadingInfoDataHelper(getActivity());
+//        mAdapter = new LoadingInfoCursorAdapter(getActivity());
+//        mAdapter.setOnItemClickListener(itemClickListener);
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -196,6 +219,71 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
             loadingInfoDataHelper.bulkInsert(ls);
         }
     }
+
+    private void loadTempDialog(){
+        printnum = 1;
+        MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
+                .customView(R.layout.dialog_load_print_temp, true).onNeutral(new MaterialDialog.SingleButtonCallback(){
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        List<Bitmap> list = new ArrayList<Bitmap>();
+                        Bitmap newb =  BarCodeCreator.createBarcode(BarCodeCreator.FORMAT_4015,printt_batch);
+                        list.add(newb);
+                        try {
+                            MApplication app = (MApplication) getActivity().getApplication();
+                            int printInt = app.getPrinter().printLable(list, printnum, -1, getActivity(),"");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } )
+                .negativeText(R.string.cancle).neutralText(R.string.print).build();
+
+        final EditText editText_code = (EditText) materialDialog.getCustomView().findViewById(R.id.d_code_temp);
+        editText_code.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                printt_batch= editable.toString();
+            }
+        });
+        final EditText editText_num = (EditText) materialDialog.getCustomView().findViewById(R.id.d_num_temp);
+        editText_num.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                try {
+                    printnum= Integer.valueOf(editable.toString());
+                    if(printnum>10){
+                        printnum = 10;
+                    }
+                }catch (Exception e){
+                    printnum = 1;
+                }
+
+            }
+        });
+        materialDialog.show();
+    }
+
 
     private OnAdpaterItemClickListener itemClickListener = new OnAdpaterItemClickListener() {
         @Override

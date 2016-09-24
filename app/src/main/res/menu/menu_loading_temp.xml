@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+    android:id="@+id/load_printer"
+    android:orderInCategory="100"
+    android:title="手动打印"
+    app:showAsAction="collapseActionView" />
+
+    <item
+        android:id="@+id/load_cam_printer"
+        android:orderInCategory="100"
+        android:title="扫码打印"
+        app:showAsAction="collapseActionView" />
+
+</menu>

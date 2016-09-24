@@ -7,25 +7,32 @@
     android:paddingTop="3dp"
     android:orientation="vertical"
     >
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/title_a"
-        android:textSize="15sp"
-        android:textColor="#000000"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/title_b"
-        android:textSize="15sp"
-        android:textColor="#000000"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/title_c"
-        android:textSize="15sp"
-        android:textColor="#000000"
-        />
+        android:background="@color/colorGray"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_a"
+            android:textSize="15sp"
+            android:textColor="#000000"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_b"
+            android:textSize="15sp"
+            android:textColor="#000000"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/title_c"
+            android:textSize="15sp"
+            android:textColor="#000000"
+            />
+    </LinearLayout>
+
 </LinearLayout>

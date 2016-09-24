@@ -49,7 +49,7 @@ public class HttpClient {
     private LiteHttp liteHttp;
     private static HttpClient single = null;
 
-    private static final String DOMAIN_NAME ="http://192.168.1.104:8089/"; //"http://192.200.5.194:8089/";
+    private static final String DOMAIN_NAME ="http://192.200.5.194:8089/";
 
     //登陆判断
     public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";
@@ -137,17 +137,17 @@ public class HttpClient {
         try {
             Response<String> result;
 
-            if((authority& Authority.LOADING_AUTHORITY)!=0){
-                result = liteHttp.execute(stringRequest);
-                List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
-                if(ls.size()>0){
-                    LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
-                    loadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                    loadingInfoDataHelper.bulkInsert(ls);
-                }else{
-                    val.add("入库:"+Parser.getLoadingErr());
-                }
-            }
+//            if((authority& Authority.LOADING_AUTHORITY)!=0){
+//                result = liteHttp.execute(stringRequest);
+//                List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
+//                if(ls.size()>0){
+//                    LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
+//                    loadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+//                    loadingInfoDataHelper.bulkInsert(ls);
+//                }else{
+//                    val.add("入库:"+Parser.getLoadingErr());
+//                }
+//            }
 
             if((authority&Authority.UNLOADING_AUTHORITY) != 0){
                 stringRequest.setUri(UNLOADING_URL);
@@ -186,6 +186,7 @@ public class HttpClient {
                 }else{
                     val.add("产线:"+Parser.getProductionErr());
                 }
+                Log.e("testcc","parseProductionInfo:"+lsc.size());
 
                 stringRequest.setUri(PRODUCTIONDETAIL_URL);
                 result = liteHttp.execute(stringRequest);
@@ -195,7 +196,7 @@ public class HttpClient {
                     productDetailDataHelper.deleteByCondition("date = ?", new String[]{date});
                     productDetailDataHelper.bulkInsert(lsd);
                 }
-//                Log.e("testcc","parseProductionDetail:"+lsd.size());
+
             }
 
         }catch (Exception e) {

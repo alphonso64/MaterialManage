@@ -25,6 +25,8 @@
         </activity>
         <activity android:name=".ProductionScanCamActivity">
         </activity>
+        <activity android:name=".LoadScanCamActivity">
+        </activity>
         <provider
             android:name=".DataBase.DataProvider"
             android:authorities="com.thingword.mam"

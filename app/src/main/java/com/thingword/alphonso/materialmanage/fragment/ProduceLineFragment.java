@@ -1,5 +1,6 @@
 package com.thingword.alphonso.materialmanage.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,32 +17,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
-import android.widget.CompoundButton;
-import android.widget.ListAdapter;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.thingword.alphonso.materialmanage.CursorAdapter.LoadingInfoCursorAdapter;
-import com.thingword.alphonso.materialmanage.CursorAdapter.OnAdpaterItemClickListener;
 import com.thingword.alphonso.materialmanage.CursorAdapter.ProductDetailCursorAdapter;
-import com.thingword.alphonso.materialmanage.CursorAdapter.ProductRecylerViewCusorAdapter;
-import com.thingword.alphonso.materialmanage.CursorAdapter.ProductionInfoCursorAdapter;
-import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
-import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
 import com.thingword.alphonso.materialmanage.ProductionScanCamActivity;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ReloadingScanActivity;
-import com.thingword.alphonso.materialmanage.ScanCamActivity;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
 
@@ -138,22 +127,23 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         String date = simpleDateFormat.format(calendar.getTime());
-//                        Log.e("testcc","date:"+date);
-//                        getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
                         mPrudctionAdapter = new ProductionInfoDataHelper(getActivity());
                         mPrudctionCursor = mPrudctionAdapter.getDateCursor(date);
-                        ProductRecylerViewCusorAdapter adapter = new ProductRecylerViewCusorAdapter(ProductionInfo.class, mPrudctionCursor,getContext());
-                        adapter.setOnItemClickListener(new OnAdpaterItemClickListener() {
-
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("选择待换线产品");
+                        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+                                R.layout.product_adapter_item,
+                                mPrudctionCursor, new String[]{"spec","productcode","tasknumber"},
+                                new int[]{R.id.title_a,R.id.title_b,R.id.title_c}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onItemClick(Object obj, int p) {
-                                productionInfo = (ProductionInfo)obj;
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mPrudctionCursor.moveToPosition(i);
+                                productionInfo = ProductionInfo.fromCursor(mPrudctionCursor);
                                 getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
                             }
                         });
-                        MaterialDialog materialDialogiiner = new MaterialDialog.Builder(getActivity()).title("选择待换线产品").adapter(adapter,null).positiveText("确定")
-                                .build();
-                        materialDialogiiner.show();
+                        builder.show();
                     }
                 })
                 .negativeText(R.string.cancle).build();
