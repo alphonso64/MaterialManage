@@ -1,7 +1,6 @@
 package com.thingword.alphonso.materialmanage.fragment;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -13,15 +12,14 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,17 +28,13 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.litesuits.http.exception.HttpException;
 import com.litesuits.http.listener.HttpListener;
 import com.litesuits.http.response.Response;
-import com.thingword.alphonso.materialmanage.CursorAdapter.LoadingInfoCursorAdapter;
 import com.thingword.alphonso.materialmanage.CursorAdapter.UnLoadingInfoCursorAdapter;
-import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
-import com.thingword.alphonso.materialmanage.MainActivity;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ScanCamActivity;
 import com.thingword.alphonso.materialmanage.app.MApplication;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 
@@ -148,13 +142,14 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                         String date = simpleDateFormat.format(calendar.getTime());
                         TextView tx = (TextView) dialog.getCustomView().findViewById(R.id.excutor);
                         String person = tx.getText().toString();
-                        //setUnLoadingInfoHttpReq(date, person);
                         getLoaderManager().restartLoader(DATE_LIST, null, UnloadingFragment.this);
                     }
                 })
                 .negativeText(R.string.cancle).build();
         TextView tx = (TextView) materialDialog.getCustomView().findViewById(R.id.excutor);
-        tx.setText(UserSharedPreferences.getCusUser(getActivity()).getUsername());
+        tx.setText(UserSharedPreferences.getCusUser(getActivity()).getEmploy_name());
+        LinearLayout ly = (LinearLayout) materialDialog.getCustomView().findViewById(R.id.linenum_ly);
+        ly.setVisibility(View.GONE);
         CalendarView cv = (CalendarView) materialDialog.getCustomView().findViewById(R.id.unload_calendarView);
         cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override

@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thingword.alphonso.materialmanage.R;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 
 
 public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<RecyclerView.ViewHolder> {
@@ -31,7 +30,7 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
         UnLoadingInfo ld = UnLoadingInfo.fromCursor(cursor);
-        if(ld.getChecked().equals("true")){
+        if(ld.getChecked().equals("true") || ld.getChecked_distri().equals("true")){
             ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.colorGray));
@@ -52,7 +51,7 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
         }
         ((CusViewHolder) holder).title_a.setText("名称:"+ld.getcInvName());
         ((CusViewHolder) holder).title_b.setText("物料编码:"+ld.getcBatch());
-        ((CusViewHolder) holder).title_aa.setText("任务单号:");
+        ((CusViewHolder) holder).title_aa.setText("任务单号:"+ld.getcMoCode());
         ((CusViewHolder) holder).title_ab.setText("产品编码:"+ld.getInvcode());
         ((CusViewHolder) holder).title_c1.setText("位置:"+ld.getcInvDefine8());
 

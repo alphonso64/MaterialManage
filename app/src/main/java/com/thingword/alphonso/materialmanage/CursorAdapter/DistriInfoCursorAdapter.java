@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thingword.alphonso.materialmanage.R;
-import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
 
 
 public class DistriInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<RecyclerView.ViewHolder> {
@@ -46,12 +46,12 @@ public class DistriInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<Re
             ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
         }
-        ((CusViewHolder) holder).title_a.setText("产品编码:"+ld.getInvcode());
-        ((CusViewHolder) holder).title_b.setText("物料名称:"+ld.getcInvName());
-        ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcBatch());
-        ((CusViewHolder) holder).title_c2.setText(ld.getShopnum());
-        ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
-        ((CusViewHolder) holder).title_d2.setText(ld.getDate());
+        ((CusViewHolder) holder).title_a.setText("任务编码:"+ld.getTasknumber());
+//        ((CusViewHolder) holder).title_b.setText("物料名称:"+ld.getcInvName());
+//        ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcBatch());
+//        ((CusViewHolder) holder).title_c2.setText(ld.getShopnum());
+//        ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
+//        ((CusViewHolder) holder).title_d2.setText(ld.getDate());
     }
 
     @Override

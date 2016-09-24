@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.Util.Util;
+import com.thingword.alphonso.materialmanage.bean.User;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +65,17 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
         return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);
     }
 
+    public CursorLoader getDetailCursorLoader(DistributionInfo distributionInfo) {
+        Log.e("testcc","getDetailCursorLoader"+" "+distributionInfo.getDate()
+                +" "+Util.fillTaskCode(distributionInfo.getTasknumber())
+                +" "+ Util.fillProductCode(distributionInfo.getProductcode(),distributionInfo.getWorkshop()));
+        return new CursorLoader(getContext(), getContentUri(), null, "date =  ? and cMoCode = ? and invcode = ?",
+                new String[]{distributionInfo.getDate(), Util.fillTaskCode(distributionInfo.getTasknumber()),
+                        Util.fillProductCode(distributionInfo.getProductcode(),distributionInfo.getWorkshop())},null);//
+
+    }
+
+
     public boolean setDataChecked(String date ,String code){
         ContentValues values = new ContentValues();
         values.put("checked","true");
@@ -74,4 +87,15 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
         return true;
     }
 
+    public boolean setDistriDataChecked(String code,DistributionInfo distributionInfo){
+        ContentValues values = new ContentValues();
+        values.put("checked_distri","true");
+        int count  = update(values,"date = ? and cBatch = ? and cMoCode = ? and invcode = ? ",new String[]{distributionInfo.getDate(),code,Util.fillTaskCode(distributionInfo.getTasknumber()),
+                Util.fillProductCode(distributionInfo.getProductcode(),distributionInfo.getWorkshop())});
+        Log.e("testcc","setDistriDataChecked "+count);
+        if(count == 0){
+            return  false;
+        }
+        return true;
+    }
 }

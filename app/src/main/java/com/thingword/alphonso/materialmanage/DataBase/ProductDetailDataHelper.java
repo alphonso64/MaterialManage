@@ -6,8 +6,9 @@ import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
-import com.thingword.alphonso.materialmanage.bean.ProductDetail;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.Util.Util;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,28 +64,11 @@ public class ProductDetailDataHelper extends BaseDataHelper implements BaseDBInt
         return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);
     }
 
-    private String fillTaskCode(String code) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (code.length() < 10) {
-            int len = 10 - code.length();
-            for (int i = 0; i < len; i++) {
-                stringBuilder.append('0');
-            }
-            stringBuilder.append(code);
-        }
-        return stringBuilder.toString();
-    }
 
-    private String cutCode(String code) {
-        if(code.length()>10){
-            return code.substring(0,10);
-        }
-        return code;
-    }
 
     public CursorLoader getDetailCursorLoader(String date,String tasknumber,String productcode) {
         return new CursorLoader(getContext(), getContentUri(), null, "date =  ? and tasknumber = ? and productcode = ?",
-                new String[]{date,fillTaskCode(tasknumber),productcode},null);//
+                new String[]{date, Util.fillTaskCode(tasknumber),productcode},null);//
     }
 
 
@@ -92,9 +76,9 @@ public class ProductDetailDataHelper extends BaseDataHelper implements BaseDBInt
         ContentValues values = new ContentValues();
         values.put("checked","true");
         int count  = update(values,"date = ? and tasknumber = ? and productcode = ? and invcode = ?"
-                ,new String[]{productionInfo.getDate(),fillTaskCode(productionInfo.getTasknumber())
-                        ,productionInfo.getProductcode(),cutCode(code)});
-        Log.e("testcc","setDataChecke "+cutCode(code));
+                ,new String[]{productionInfo.getDate(),Util.fillTaskCode(productionInfo.getTasknumber())
+                        ,productionInfo.getProductcode(),Util.cutCode(code)});
+        Log.e("testcc","setDataChecke "+Util.cutCode(code));
 //        Log.e("testcc","checkDataValid "+count);
         if(count == 0){
             return  false;

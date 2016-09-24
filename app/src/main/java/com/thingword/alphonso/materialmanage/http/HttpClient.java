@@ -6,35 +6,24 @@ package com.thingword.alphonso.materialmanage.http;
 import android.util.Log;
 
 import com.litesuits.http.LiteHttp;
-import com.litesuits.http.data.GsonImpl;
 import com.litesuits.http.impl.huc.HttpUrlClient;
 import com.litesuits.http.listener.HttpListener;
-import com.litesuits.http.request.JsonRequest;
 import com.litesuits.http.request.StringRequest;
 import com.litesuits.http.request.content.JsonBody;
-import com.litesuits.http.request.content.StringBody;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper;
-import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.app.MApplication;
-import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.ProductDetail;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
-import com.thingword.alphonso.materialmanage.fragment.DistributionFragment;
-import com.thingword.alphonso.materialmanage.fragment.LoadingFragment;
-import com.thingword.alphonso.materialmanage.fragment.ProduceLineFragment;
-import com.thingword.alphonso.materialmanage.fragment.TextFragment;
-import com.thingword.alphonso.materialmanage.fragment.UnloadingFragment;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Authority;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,13 +38,14 @@ public class HttpClient {
     private LiteHttp liteHttp;
     private static HttpClient single = null;
 
-    private static final String DOMAIN_NAME ="http://192.200.5.194:8089/";
+    private static final String DOMAIN_NAME ="http://192.168.3.21:8089/";
 
     //登陆判断
     public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";
     public static final String LOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqLoadingInfo";
-    public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfo";
+    public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqAllUnLoadingInfo";
     public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
+    public static final String STOREPRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqStoreProductionInfo";
     public static final String PRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfo";
     public static final String PRODUCTIONDETAIL_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfoDetail";
 
@@ -63,8 +53,8 @@ public class HttpClient {
         liteHttp = LiteHttp.build(null)
                 .setHttpClient(new HttpUrlClient())       // http
                 .setUserAgent("Mozilla/5.0 (...)")  // set custom User-Agent
-                .setSocketTimeout(1000)           // socket timeout: 10s
-                .setConnectTimeout(1000)         // connect timeout: 10s
+                .setSocketTimeout(10000)           // socket timeout: 10s
+                .setConnectTimeout(10000)         // connect timeout: 10s
                 .create();
     }
 
@@ -163,7 +153,7 @@ public class HttpClient {
             }
 
             if((authority&Authority.DISTRIBUTION_AUTHORITY)!= 0){
-                stringRequest.setUri(DISTRI_URL);
+                stringRequest.setUri(STOREPRODUCTION_URL);
                 result = liteHttp.execute(stringRequest);
                 List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
                 if(lsb.size()>0){

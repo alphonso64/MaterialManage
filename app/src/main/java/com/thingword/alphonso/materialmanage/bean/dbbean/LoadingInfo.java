@@ -1,4 +1,4 @@
-package com.thingword.alphonso.materialmanage.bean;
+package com.thingword.alphonso.materialmanage.bean.dbbean;
 
 import android.database.Cursor;
 

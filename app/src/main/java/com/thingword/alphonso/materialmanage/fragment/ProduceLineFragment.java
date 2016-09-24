@@ -32,7 +32,7 @@ import com.thingword.alphonso.materialmanage.ProductionScanCamActivity;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ReloadingScanActivity;
 import com.thingword.alphonso.materialmanage.app.MApplication;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

@@ -1,4 +1,4 @@
-package com.thingword.alphonso.materialmanage.bean;
+package com.thingword.alphonso.materialmanage.bean.dbbean;
 
 import android.database.Cursor;
 
@@ -19,6 +19,9 @@ public class UnLoadingInfo {
     private String shopnum;
     private String linenum;
     private String checked;
+    private String checked_distri;
+    private String cMoCode;
+    private String uploadbatch;
 
     public String getcInvCode() {
         return cInvCode;
@@ -111,5 +114,29 @@ public class UnLoadingInfo {
 
     public void setLinenum(String linenum) {
         this.linenum = linenum;
+    }
+
+    public String getcMoCode() {
+        return cMoCode;
+    }
+
+    public void setcMoCode(String cMoCode) {
+        this.cMoCode = cMoCode;
+    }
+
+    public String getUploadbatch() {
+        return uploadbatch;
+    }
+
+    public void setUploadbatch(String uploadbatch) {
+        this.uploadbatch = uploadbatch;
+    }
+
+    public String getChecked_distri() {
+        return checked_distri;
+    }
+
+    public void setChecked_distri(String checked_distri) {
+        this.checked_distri = checked_distri;
     }
 }

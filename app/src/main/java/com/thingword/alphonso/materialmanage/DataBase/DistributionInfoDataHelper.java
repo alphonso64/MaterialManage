@@ -2,12 +2,14 @@ package com.thingword.alphonso.materialmanage.DataBase;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
-import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.Util.Util;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,20 +60,15 @@ public class DistributionInfoDataHelper extends BaseDataHelper implements BaseDB
         return new CursorLoader(getContext(), getContentUri(), null, null, null, null);
     }
 
+    public Cursor getWorshopCursor(int pos) {
+        if(pos == 0)
+            return query(getContentUri(), null, "workshop = ?",new String[]{"一车间"}, null);
+        return query(getContentUri(), null, "workshop = ?",new String[]{"二车间"}, null);
+    }
 
     public CursorLoader getDateCursorLoader(String date) {
         return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);
     }
 
-    public boolean setDataChecked(String date ,String code){
-        ContentValues values = new ContentValues();
-        values.put("checked","true");
-        int count  = update(values,"date = ? and cBatch = ?",new String[]{date,code});
-        Log.e("testcc","checkDataValid "+count);
-        if(count == 0){
-            return  false;
-        }
-        return true;
-    }
 
 }

@@ -1,6 +1,7 @@
 package com.thingword.alphonso.materialmanage.fragment;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +23,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
+import android.widget.ListAdapter;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -33,9 +38,15 @@ import com.thingword.alphonso.materialmanage.DistriScanCamActivity;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ScanCamActivity;
 import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,11 +61,15 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
     Toolbar toolbar;
     @BindView(R.id.distri_recyclerview)
     RecyclerView mRecyclerView;
-    private DistributionInfoDataHelper mDataHelper;
-    private DistriInfoCursorAdapter mAdapter;
-
+    private DistributionInfoDataHelper disDataHelper;
+    private List<Map<String, String>> worshopList;
     private static final int DATE_LIST = 1;
     private Calendar calendar;
+    private DistributionInfo distributionInfo;
+
+    private UnLoadingInfoDataHelper mDataHelper;
+    private UnLoadingInfoCursorAdapter mAdapter;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,16 +89,14 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
                         getLoaderManager().destroyLoader(DATE_LIST);
                         break;
                     case R.id.distri_cam:
-                        if(calendar != null){
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            String date = simpleDateFormat.format(calendar.getTime());
+                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
                             MApplication app = (MApplication) getActivity().getApplication();
-                            app.setDistriWorkDate(date);
+                            app.setDistributionInfo(distributionInfo);
                             Intent intent = new Intent(getActivity(), DistriScanCamActivity.class);
                             startActivity(intent);
                         }else{
                             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
-                                    setTitle("请添加工作列表").
+                                    setTitle("工作列表不能为空").
                                     setPositiveButton("确定",null)
                                     .create();
                             alertDialog.show();
@@ -101,8 +114,9 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mDataHelper = new DistributionInfoDataHelper(getActivity());
-        mAdapter = new DistriInfoCursorAdapter(getActivity());
+        mDataHelper = new UnLoadingInfoDataHelper(getActivity());
+        mAdapter = new UnLoadingInfoCursorAdapter(getActivity());
+        disDataHelper = new DistributionInfoDataHelper(getActivity());
 //        mAdapter.setOnItemClickListener(itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
@@ -133,7 +147,8 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
                         calendar = tempCalendar;
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         String date = simpleDateFormat.format(calendar.getTime());
-                        getLoaderManager().restartLoader(DATE_LIST, null, DistributionFragment.this);
+//                        getLoaderManager().restartLoader(DATE_LIST, null, DistributionFragment.this);
+                        loadWorkDiag();
                     }
                 })
                 .negativeText(R.string.cancle).build();
@@ -147,12 +162,56 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
         materialDialog.show();
     }
 
+    private void loadWorkDiag(){
+        worshopList = new ArrayList<Map<String, String>>();
+        Map<String, String> keyValuePair = new HashMap<String, String>();
+        keyValuePair.put("Name", "一车间");
+        Map<String, String> keyValuePair_ = new HashMap<String, String>();
+        keyValuePair_.put("Name", "二三车间");
+        worshopList.add(keyValuePair);
+        worshopList.add(keyValuePair_);
+
+        ListAdapter adapter = new SimpleAdapter(getActivity(), worshopList,
+                android.R.layout.simple_list_item_1, new String[] { "Name"}, new int[] { android.R.id.text1 });
+
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("选择车间");
+        builder.setAdapter(adapter,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                loadStoreProductionInfoView(i);
+            }
+        });
+        builder.show();
+    }
+
+    private void loadStoreProductionInfoView(int pos){
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("选择产品");
+        final Cursor cusor = disDataHelper.getWorshopCursor(pos);
+        Log.e("testcc","loadStoreProductionInfoView "+cusor.getCount());
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+                R.layout.product_adapter_item,
+                cusor, new String[]{"spec","productcode","tasknumber"},
+                new int[]{R.id.title_a,R.id.title_b,R.id.title_c}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                cusor.moveToPosition(i);
+                distributionInfo = DistributionInfo.fromCursor(cusor);
+                getLoaderManager().restartLoader(DATE_LIST, null, DistributionFragment.this);
+            }
+        });
+        builder.show();
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if (id == DATE_LIST) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String date = simpleDateFormat.format(calendar.getTime());
-            return mDataHelper.getDateCursorLoader(date);
+            //return mDataHelper.getCursorLoader();
+            return mDataHelper.getDetailCursorLoader(distributionInfo);
         }
         return null;
     }

@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thingword.alphonso.materialmanage.R;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 
 
 public class ProductionInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<RecyclerView.ViewHolder> {

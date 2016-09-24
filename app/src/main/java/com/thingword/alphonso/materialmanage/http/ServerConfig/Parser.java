@@ -1,14 +1,11 @@
 package com.thingword.alphonso.materialmanage.http.ServerConfig;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
-import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.ProductDetail;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
-import com.thingword.alphonso.materialmanage.bean.ReturnData;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,6 +101,7 @@ public class Parser {
                     Gson gson = new Gson();
                     UnLoadingInfo ld = gson.fromJson(array.getString(i), UnLoadingInfo.class);
                     ld.setChecked("false");
+                    ld.setChecked_distri("false");
                     ls.add(ld);
                 }
             }else{

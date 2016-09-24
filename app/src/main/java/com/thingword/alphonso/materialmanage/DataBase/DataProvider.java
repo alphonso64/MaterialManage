@@ -1,10 +1,8 @@
 package com.thingword.alphonso.materialmanage.DataBase;
 
-import android.app.Activity;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -15,11 +13,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.thingword.alphonso.materialmanage.app.MApplication;
-import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.ProductDetail;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;

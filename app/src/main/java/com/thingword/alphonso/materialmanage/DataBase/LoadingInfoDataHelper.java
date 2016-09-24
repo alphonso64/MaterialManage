@@ -5,7 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
 
 import java.util.ArrayList;
 import java.util.List;

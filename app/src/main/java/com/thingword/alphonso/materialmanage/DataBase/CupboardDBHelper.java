@@ -5,11 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.thingword.alphonso.materialmanage.bean.DistributionInfo;
-import com.thingword.alphonso.materialmanage.bean.LoadingInfo;
-import com.thingword.alphonso.materialmanage.bean.ProductDetail;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
-import com.thingword.alphonso.materialmanage.bean.UnLoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.User;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;

@@ -1,13 +1,13 @@
-package com.thingword.alphonso.materialmanage.bean;
+package com.thingword.alphonso.materialmanage.bean.dbbean;
 
 import android.database.Cursor;
 
 import static nl.qbusict.cupboard.CupboardFactory.cupboard;
 
 /**
- * Created by thingword-A on 2016/9/11.
+ * Created by thingword-A on 2016/8/25.
  */
-public class ProductionInfo {
+public class DistributionInfo {
     private String workshop;
     private String productline;
     private String tasknumber;
@@ -19,6 +19,13 @@ public class ProductionInfo {
     private String remark;
     private String processflow;
     private String boardcode;
+    private String uploadbatch;
+    private String checked;
+
+    public static DistributionInfo fromCursor(Cursor cursor) {
+        DistributionInfo distributionInfo= cupboard().withCursor(cursor).get(DistributionInfo.class);
+        return distributionInfo;
+    }
 
     public String getWorkshop() {
         return workshop;
@@ -108,8 +115,19 @@ public class ProductionInfo {
         this.boardcode = boardcode;
     }
 
-    public static ProductionInfo fromCursor(Cursor cursor) {
-        ProductionInfo productionInfo= cupboard().withCursor(cursor).get(ProductionInfo.class);
-        return productionInfo;
+    public String getUploadbatch() {
+        return uploadbatch;
+    }
+
+    public void setUploadbatch(String uploadbatch) {
+        this.uploadbatch = uploadbatch;
+    }
+
+    public String getChecked() {
+        return checked;
+    }
+
+    public void setChecked(String checked) {
+        this.checked = checked;
     }
 }

@@ -4,7 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 
 import Jack.WewinPrinterHelper.WwPrint;
 
@@ -17,6 +18,7 @@ public class MApplication extends Application {
     private String unloadWorkDate;
     private String distriWorkDate;
     private ProductionInfo productionInfo;
+    private DistributionInfo distributionInfo;
     public WwPrint getPrinter(){
         if(printer == null)
         {
@@ -63,5 +65,13 @@ public class MApplication extends Application {
 
     public void setProductionInfo(ProductionInfo productionInfo) {
         this.productionInfo = productionInfo;
+    }
+
+    public DistributionInfo getDistributionInfo() {
+        return distributionInfo;
+    }
+
+    public void setDistributionInfo(DistributionInfo distributionInfo) {
+        this.distributionInfo = distributionInfo;
     }
 }

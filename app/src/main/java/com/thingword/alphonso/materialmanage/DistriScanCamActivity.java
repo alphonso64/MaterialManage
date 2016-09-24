@@ -18,6 +18,8 @@ import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.Util.BarCodeCreator;
 import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +32,12 @@ public class DistriScanCamActivity extends CaptureActivity{
 //    private int printnum;
 //    private int printmaxNum = 10;
 //    private int printminNum = 1;
-    private DistributionInfoDataHelper distributionInfoDataHelper;
-
+    private UnLoadingInfoDataHelper unLoadingInfoDataHelper;
+    private DistributionInfo distributionInfo;
     protected View resultView;
     protected TextView scanRightView;
     protected TextView scanWrongView;
     protected Button printButton;
-
-    String date;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,13 +45,13 @@ public class DistriScanCamActivity extends CaptureActivity{
         scanRightView = (TextView) findViewById(R.id.scan_right_text);
         scanWrongView = (TextView) findViewById(R.id.scan_wrong_text);
         printButton = (Button) findViewById(R.id.print_button);
-        distributionInfoDataHelper =new DistributionInfoDataHelper(this);
+        unLoadingInfoDataHelper =new UnLoadingInfoDataHelper(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        date = ((MApplication)getApplication()).getDistriWorkDate();
+        distributionInfo = ((MApplication)getApplication()).getDistributionInfo();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class DistriScanCamActivity extends CaptureActivity{
     }
 
     private void checkDataValid(){
-        boolean res = distributionInfoDataHelper.setDataChecked(date,parsedResult.getDisplayResult());
+        boolean res = unLoadingInfoDataHelper.setDistriDataChecked(parsedResult.getDisplayResult(),distributionInfo);
         if(res){
             scanRightView.setVisibility(View.VISIBLE);
             scanWrongView.setVisibility(View.GONE);

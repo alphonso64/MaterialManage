@@ -11,11 +11,9 @@ import com.google.zxing.Result;
 import com.google.zxing.client.android.decode.CaptureActivity;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ResultParser;
-import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
-import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.app.MApplication;
-import com.thingword.alphonso.materialmanage.bean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 
 /**
  * Created by thingword-A on 2016/8/28.
