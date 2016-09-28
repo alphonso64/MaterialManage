@@ -16,7 +16,6 @@ public class MApplication extends Application {
     private static Context sContext;
     private WwPrint printer;
     private String unloadWorkDate;
-    private String distriWorkDate;
     private ProductionInfo productionInfo;
     private DistributionInfo distributionInfo;
     public WwPrint getPrinter(){
@@ -31,7 +30,6 @@ public class MApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sContext = getApplicationContext();
-        Log.e("testcc", "onCreate");
     }
 
     public static Context getContext() {
@@ -49,14 +47,6 @@ public class MApplication extends Application {
 
     public void setUnloadWorkDate(String unloadWorkDate) {
         this.unloadWorkDate = unloadWorkDate;
-    }
-
-    public String getDistriWorkDate() {
-        return distriWorkDate;
-    }
-
-    public void setDistriWorkDate(String distriWorkDate) {
-        this.distriWorkDate = distriWorkDate;
     }
 
     public ProductionInfo getProductionInfo() {

@@ -21,6 +21,7 @@ public class UnLoadingInfo {
     private String checked;
     private String checked_distri;
     private String cMoCode;
+    private String executor;
     private String uploadbatch;
 
     public String getcInvCode() {
@@ -138,5 +139,13 @@ public class UnLoadingInfo {
 
     public void setChecked_distri(String checked_distri) {
         this.checked_distri = checked_distri;
+    }
+
+    public String getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(String executor) {
+        this.executor = executor;
     }
 }

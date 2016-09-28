@@ -34,6 +34,7 @@ import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ScanCamActivity;
 import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
@@ -59,6 +60,9 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     private UnLoadingInfoCursorAdapter mAdapter;
 
     private static final int DATE_LIST = 1;
+    private static final int DATE_LIST_NAME = 2;
+    private static final int DATE_LIST_LINE = 3;
+    private static final int DATE_LIST_CBATCH = 4;
     private Calendar calendar;
 
 
@@ -95,6 +99,22 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                                     .create();
                             alertDialog.show();
                         }
+                        break;
+                    case R.id.unload_name_sort:
+                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
+                            getLoaderManager().restartLoader(DATE_LIST_NAME, null, UnloadingFragment.this);
+                        }
+                        break;
+                    case R.id.unload_cbatch_sort:
+                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
+                            getLoaderManager().restartLoader(DATE_LIST_CBATCH, null, UnloadingFragment.this);
+                        }
+                        break;
+                    case R.id.unload_line_sort:
+                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
+                            getLoaderManager().restartLoader(DATE_LIST_LINE, null, UnloadingFragment.this);
+                        }
+                        break;
                     default:
                 }
                 return false;
@@ -108,7 +128,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mDataHelper = new UnLoadingInfoDataHelper(getActivity());
-        mAdapter = new UnLoadingInfoCursorAdapter(getActivity());
+        mAdapter = new UnLoadingInfoCursorAdapter(getActivity(),UnLoadingInfoCursorAdapter.UNLOADING);
 //        mAdapter.setOnItemClickListener(itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
@@ -194,7 +214,19 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
         if (id == DATE_LIST) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String date = simpleDateFormat.format(calendar.getTime());
-            return mDataHelper.getDateCursorLoader(date);
+            return mDataHelper.getDatePersonCursorLoader(date,UserSharedPreferences.getCusUser(MApplication.getContext()).getEmploy_name());
+        }else if(id == DATE_LIST_NAME){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String date = simpleDateFormat.format(calendar.getTime());
+            return mDataHelper.getDatePersonCursorLoaderOrderName(date,UserSharedPreferences.getCusUser(MApplication.getContext()).getEmploy_name());
+        }else if(id == DATE_LIST_CBATCH){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String date = simpleDateFormat.format(calendar.getTime());
+            return mDataHelper.getDatePersonCursorLoaderOrderBatch(date,UserSharedPreferences.getCusUser(MApplication.getContext()).getEmploy_name());
+        }else if(id == DATE_LIST_LINE){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String date = simpleDateFormat.format(calendar.getTime());
+            return mDataHelper.getDatePersonCursorLoaderOrderLine(date,UserSharedPreferences.getCusUser(MApplication.getContext()).getEmploy_name());
         }
         return null;
     }

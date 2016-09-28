@@ -41,4 +41,8 @@
     <string name="no_record">没有记录</string>
     <string name="reloading_title">换料扫描</string>
 
+    <string name="sort_name">产品名称排序</string>
+    <string name="sort_code">材料编码排序</string>
+    <string name="sort_line">线别排序</string>
+
 </resources>

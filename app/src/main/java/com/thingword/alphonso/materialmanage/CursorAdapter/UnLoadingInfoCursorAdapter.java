@@ -15,10 +15,14 @@ import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 
 public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<RecyclerView.ViewHolder> {
     private Context context;
+    private int flag;
+    public static int DISTRIBUTION =  1;
+    public static int UNLOADING =  2;
 
-    public UnLoadingInfoCursorAdapter(Context context) {
+    public UnLoadingInfoCursorAdapter(Context context,int flag) {
         super(context, null);
         this.context = context;
+        this.flag = flag;
     }
 
     private OnAdpaterItemClickListener onItemClickListener = null;
@@ -30,25 +34,48 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
         UnLoadingInfo ld = UnLoadingInfo.fromCursor(cursor);
-        if(ld.getChecked().equals("true") || ld.getChecked_distri().equals("true")){
-            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
-            ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
-            ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.colorGray));
-            ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.colorGray));
-            ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.colorGray));
-            ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.colorGray));
-            ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.colorGray));
-            ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.colorGray));
-        }else{
-            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
-            ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
-            ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.textblack));
-            ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.textblack));
-            ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
-            ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
-            ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
-            ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
+        if(flag == DISTRIBUTION){
+            if( ld.getChecked_distri().equals("true")){
+                ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.colorGray));
+            }else{
+                ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
+            }
+        }else if(flag == UNLOADING){
+            if( ld.getChecked().equals("true")){
+                ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.colorGray));
+                ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.colorGray));
+            }else{
+                ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_aa.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_ab.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
+                ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
+            }
         }
+
         ((CusViewHolder) holder).title_a.setText("名称:"+ld.getcInvName());
         ((CusViewHolder) holder).title_b.setText("物料编码:"+ld.getcBatch());
         ((CusViewHolder) holder).title_aa.setText("任务单号:"+ld.getcMoCode());

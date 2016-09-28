@@ -2,6 +2,7 @@ package com.thingword.alphonso.materialmanage.DataBase;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
@@ -55,6 +56,14 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
         delete(where,selectionArgs);
     }
 
+    public boolean ifUploadBatchExist(String uoloadbatch ,String date){
+        Cursor cursor = query(null,"date = ? and uploadbatch = ?",new String[]{date,uoloadbatch},null);
+        if(cursor.getCount()>0){
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public CursorLoader getCursorLoader() {
         return new CursorLoader(getContext(), getContentUri(), null, null, null, null);
@@ -63,6 +72,21 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
 
     public CursorLoader getDateCursorLoader(String date) {
         return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);
+    }
+
+    public CursorLoader getDatePersonCursorLoader(String date,String person) {
+        return new CursorLoader(getContext(), getContentUri(), null, "date = ? and executor = ?",new String[]{date,person},null);
+    }
+
+    public CursorLoader getDatePersonCursorLoaderOrderName(String date,String person) {
+        return new CursorLoader(getContext(), getContentUri(), null, "date = ? and executor = ?",new String[]{date,person},"cInvName");
+    }
+
+    public CursorLoader getDatePersonCursorLoaderOrderBatch(String date,String person) {
+        return new CursorLoader(getContext(), getContentUri(), null, "date = ? and executor = ?",new String[]{date,person},"cBatch");
+    }
+    public CursorLoader getDatePersonCursorLoaderOrderLine(String date,String person) {
+        return new CursorLoader(getContext(), getContentUri(), null, "date = ? and executor = ?",new String[]{date,person},"linenum");
     }
 
     public CursorLoader getDetailCursorLoader(DistributionInfo distributionInfo) {
@@ -85,6 +109,38 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
             return  false;
         }
         return true;
+    }
+
+    public void updateData(UnLoadingInfo unLoadingInfo){
+        unLoadingInfo.setChecked("true");
+        ContentValues values = getContentValues(unLoadingInfo);
+        update(values,"date = ? and cBatch = ? and executor = ? and cMoCode = ? and invcode = ? "
+                ,new String[]{unLoadingInfo.getDate(),unLoadingInfo.getcBatch(),unLoadingInfo.getExecutor(),
+                unLoadingInfo.getcMoCode(),unLoadingInfo.getInvcode()});
+    }
+
+    public void updateData_(UnLoadingInfo unLoadingInfo){
+        unLoadingInfo.setChecked("true");
+        ContentValues values = getContentValues(unLoadingInfo);
+        update(values,"date = ? and cInvCode = ? and executor = ? and cMoCode = ? and invcode = ? "
+                ,new String[]{unLoadingInfo.getDate(),unLoadingInfo.getcInvCode(),unLoadingInfo.getExecutor(),
+                        unLoadingInfo.getcMoCode(),unLoadingInfo.getInvcode()});
+    }
+
+    public Cursor getDataCheckedCurosr(String date ,String code,String name){
+        return query(null,"date = ? and cBatch = ? and executor = ?",new String[]{date,code,name},null);
+    }
+
+    public Cursor getDataCheckedCurosr_(String date ,String code,String name){
+        return query(null,"date = ? and cBatch = ? and executor = ? and checked = ?",new String[]{date,code,name,"false"},null);
+    }
+
+    public Cursor getDataCheckedFuzyCurosr(String date ,String code,String name){
+        return query(null,"date = ? and cInvCode = ? and executor = ?",new String[]{date,Util.cutCode(code),name},null);
+    }
+
+    public Cursor getDataCheckedFuzyCurosr_(String date ,String code,String name){
+        return query(null,"date = ? and cInvCode = ? and executor = ? and checked = ?",new String[]{date,Util.cutCode(code),name,"false"},null);
     }
 
     public boolean setDistriDataChecked(String code,DistributionInfo distributionInfo){

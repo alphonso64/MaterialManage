@@ -45,11 +45,10 @@ public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter
             ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
         }
-        ((CusViewHolder) holder).title_a.setText("名称:"+ld.getInvname());
+        ((CusViewHolder) holder).title_a.setText("产品:"+ld.getInvname());
         ((CusViewHolder) holder).title_b.setText("规格:"+ld.getInvstd());
         ((CusViewHolder) holder).title_c1.setText("条码:"+ld.getInvcode());
-        ((CusViewHolder) holder).title_d1.setText(ld.getDefine28());
-        ((CusViewHolder) holder).title_d2.setText(ld.getLinenum());
+//        ((CusViewHolder) holder).title_d1.setText("名称:"+ld.getInvstd());
     }
 
     @Override
@@ -76,6 +75,8 @@ public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter
             title_d1 = (TextView) itemView.findViewById(R.id.cv_title_d1);
             title_d2 = (TextView) itemView.findViewById(R.id.cv_title_d2);
             title_c2.setVisibility(View.GONE);
+            title_d1.setVisibility(View.GONE);
+            title_d2.setVisibility(View.GONE);
             mAdapter = adapter;
             CardView cv = (CardView) itemView.findViewById(R.id.cv_ld);
             cv.setOnClickListener(new View.OnClickListener() {

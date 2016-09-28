@@ -25,6 +25,17 @@
             android:text="@string/scan_right"/>
 
         <TextView
+            android:id="@+id/scan_middle_text"
+            android:paddingTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:textColor="@color/corner_color"
+            android:text="@string/scan_middle"/>
+
+        <TextView
             android:id="@+id/scan_wrong_text"
             android:paddingTop="10dp"
             android:layout_width="wrap_content"

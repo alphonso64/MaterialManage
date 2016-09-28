@@ -5,6 +5,7 @@ package com.thingword.alphonso.materialmanage.http;
  */
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.impl.huc.HttpUrlClient;
 import com.litesuits.http.listener.HttpListener;
@@ -17,6 +18,7 @@ import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.BatchData;
 import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
@@ -24,6 +26,7 @@ import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Authority;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,13 +40,13 @@ import java.util.List;
 public class HttpClient {
     private LiteHttp liteHttp;
     private static HttpClient single = null;
-
-    private static final String DOMAIN_NAME ="http://192.168.3.21:8089/";
+    private static final String DOMAIN_NAME ="http://192.200.5.194:8089/";
 
     //登陆判断
     public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";
     public static final String LOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqLoadingInfo";
     public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqAllUnLoadingInfo";
+    public static final String BATCH_UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfoByBatch";
     public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
     public static final String STOREPRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqStoreProductionInfo";
     public static final String PRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfo";
@@ -139,30 +142,60 @@ public class HttpClient {
 //                }
 //            }
 
+            int flag = 0;
+
             if((authority&Authority.UNLOADING_AUTHORITY) != 0){
-                stringRequest.setUri(UNLOADING_URL);
+                stringRequest.setUri(BATCH_UNLOADING_URL);
                 result = liteHttp.execute(stringRequest);
-                List<UnLoadingInfo> lsa =Parser.parseUnLoadingInfo(result.getResult());
+                List<UnLoadingInfo> lsa =Parser.parseBatchUnLoadingInfo(result.getResult(),date);
+                Log.e("testcc","parseBatchUnLoadingInfo:"+lsa.size());
                 if(lsa.size()>0){
                     UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
-                    unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+//                    unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
                     unloadingInfoDataHelper.bulkInsert(lsa);
+                    flag = 1;
                 }else{
-                    val.add("出库:"+Parser.getUnloadingErr());
+                    if(!Parser.getUnloadingErr().equals("true")){
+                        val.add("出库:"+Parser.getUnloadingErr());
+                        flag = 2;
+                    }
+                    flag = 1;
                 }
             }
 
             if((authority&Authority.DISTRIBUTION_AUTHORITY)!= 0){
-                stringRequest.setUri(STOREPRODUCTION_URL);
-                result = liteHttp.execute(stringRequest);
-                List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
-                if(lsb.size()>0){
-                    DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
-                    distributionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                    distributionInfoDataHelper.bulkInsert(lsb);
-                }else{
-                    val.add("配料:"+Parser.getDistriErr());
+                if(flag == 0){
+                    stringRequest.setUri(BATCH_UNLOADING_URL);
+                    result = liteHttp.execute(stringRequest);
+                    List<UnLoadingInfo> lsa =Parser.parseBatchUnLoadingInfo(result.getResult(),date);
+
+                    if(lsa.size()>0){
+                        UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
+//                        unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+                        unloadingInfoDataHelper.bulkInsert(lsa);
+                        flag = 1;
+                    }else{
+                        if(!Parser.getUnloadingErr().equals("true")){
+                            flag = 2;
+                        }
+                        flag = 1;
+                    }
                 }
+                if(flag == 2){
+                    val.add("配料:"+Parser.getDistriErr());
+                }else if(flag == 1){
+                    stringRequest.setUri(STOREPRODUCTION_URL);
+                    result = liteHttp.execute(stringRequest);
+                    List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
+                    if(lsb.size()>0){
+                        DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
+                        distributionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+                        distributionInfoDataHelper.bulkInsert(lsb);
+                    }else{
+                        val.add("配料:"+Parser.getDistriErr());
+                    }
+                }
+
             }
 
             if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
@@ -176,8 +209,6 @@ public class HttpClient {
                 }else{
                     val.add("产线:"+Parser.getProductionErr());
                 }
-                Log.e("testcc","parseProductionInfo:"+lsc.size());
-
                 stringRequest.setUri(PRODUCTIONDETAIL_URL);
                 result = liteHttp.execute(stringRequest);
                 List<ProductDetail> lsd =Parser.parseProductionDetail(result.getResult());

@@ -115,7 +115,7 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mDataHelper = new UnLoadingInfoDataHelper(getActivity());
-        mAdapter = new UnLoadingInfoCursorAdapter(getActivity());
+        mAdapter = new UnLoadingInfoCursorAdapter(getActivity(),UnLoadingInfoCursorAdapter.DISTRIBUTION);
         disDataHelper = new DistributionInfoDataHelper(getActivity());
 //        mAdapter.setOnItemClickListener(itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -189,11 +189,11 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
         builder.setTitle("选择产品");
         final Cursor cusor = disDataHelper.getWorshopCursor(pos);
-        Log.e("testcc","loadStoreProductionInfoView "+cusor.getCount());
+//        Log.e("testcc","loadStoreProductionInfoView "+cusor.getCount());
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
-                R.layout.product_adapter_item,
-                cusor, new String[]{"spec","productcode","tasknumber"},
-                new int[]{R.id.title_a,R.id.title_b,R.id.title_c}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+                R.layout.product_adapter_item4,
+                cusor, new String[]{"spec","productcode","tasknumber","productline"},
+                new int[]{R.id.title_a,R.id.title_b,R.id.title_c,R.id.title_d}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

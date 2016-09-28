@@ -1,6 +1,11 @@
 package com.thingword.alphonso.materialmanage.http.ServerConfig;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
+import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
+import com.thingword.alphonso.materialmanage.app.MApplication;
+import com.thingword.alphonso.materialmanage.bean.BatchData;
 import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
@@ -103,6 +108,38 @@ public class Parser {
                     ld.setChecked("false");
                     ld.setChecked_distri("false");
                     ls.add(ld);
+                }
+            }else{
+                unloadingErr = (String) object.get(ServerMessage.RETURN_MSG);
+            }
+        } catch (JSONException e) {
+        }
+        return ls;
+    }
+
+    public static List<UnLoadingInfo> parseBatchUnLoadingInfo(String val,String date) {
+        List<UnLoadingInfo> ls = new ArrayList<>();
+        UnLoadingInfoDataHelper unLoadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
+        try {
+            JSONObject object = new JSONObject(val);
+            String result = (String) object.get(ServerMessage.RETURN_CODE);
+            if (result.equals(ServerMessage.RETURN_SUCCESS)) {
+                JSONArray array = new JSONArray(object.getString(ServerMessage.DATA));
+                if(array.length() >0){
+                    unloadingErr = "true";
+                }
+                for (int i = 0; i < array.length(); i++) {
+                    Gson gson = new Gson();
+                    BatchData<UnLoadingInfo> ld = gson.fromJson(array.getString(i), BatchData.class);
+                    if(!unLoadingInfoDataHelper.ifUploadBatchExist(ld.getBatch(),date)){
+                        JSONArray array_inner = new JSONArray(ld.getData());
+                        for(int j=0;j<array_inner.length();j++){
+                            UnLoadingInfo unLoadingInfo = gson.fromJson(array_inner.getString(j),UnLoadingInfo.class);
+                            unLoadingInfo.setChecked("false");
+                            unLoadingInfo.setChecked_distri("false");
+                            ls.add(unLoadingInfo);
+                        }
+                    }
                 }
             }else{
                 unloadingErr = (String) object.get(ServerMessage.RETURN_MSG);
