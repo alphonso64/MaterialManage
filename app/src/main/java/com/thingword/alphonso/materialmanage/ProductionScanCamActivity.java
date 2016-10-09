@@ -72,7 +72,7 @@ public class ProductionScanCamActivity extends CaptureActivity{
     }
 
     private void checkDataValid(){
-        boolean res = productDetailDataHelper.setDataChecked(productionInfo,parsedResult.getDisplayResult());
+        boolean res = productDetailDataHelper.setDataChecked(parsedResult.getDisplayResult());
         if(res){
             scanRightView.setVisibility(View.VISIBLE);
             scanWrongView.setVisibility(View.GONE);

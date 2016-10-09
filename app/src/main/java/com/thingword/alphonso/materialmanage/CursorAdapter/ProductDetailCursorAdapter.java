@@ -15,10 +15,11 @@ import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
 
 public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter<RecyclerView.ViewHolder> {
     private Context context;
-
+    private int cnt;
     public ProductDetailCursorAdapter(Context context) {
         super(context, null);
         this.context = context;
+        cnt = 0;
     }
     
     private OnAdpaterItemClickListener onItemClickListener = null;
@@ -48,13 +49,14 @@ public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter
         ((CusViewHolder) holder).title_a.setText("产品:"+ld.getInvname());
         ((CusViewHolder) holder).title_b.setText("规格:"+ld.getInvstd());
         ((CusViewHolder) holder).title_c1.setText("条码:"+ld.getInvcode());
-//        ((CusViewHolder) holder).title_d1.setText("名称:"+ld.getInvstd());
+        ((CusViewHolder) holder).title_c2.setText(String.valueOf(cursor.getPosition()));
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v= LayoutInflater.from(context).inflate(R.layout.cardview_loadinfo_item,parent,false);
         CusViewHolder bvh=new CusViewHolder(v,this);
+        cnt = 0;
         return bvh;
     }
 
@@ -74,7 +76,7 @@ public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter
             title_c2 = (TextView) itemView.findViewById(R.id.cv_title_c2);
             title_d1 = (TextView) itemView.findViewById(R.id.cv_title_d1);
             title_d2 = (TextView) itemView.findViewById(R.id.cv_title_d2);
-            title_c2.setVisibility(View.GONE);
+//            title_c2.setVisibility(View.GONE);
             title_d1.setVisibility(View.GONE);
             title_d2.setVisibility(View.GONE);
             mAdapter = adapter;

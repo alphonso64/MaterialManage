@@ -40,11 +40,12 @@ import java.util.List;
 public class HttpClient {
     private LiteHttp liteHttp;
     private static HttpClient single = null;
-    private static final String DOMAIN_NAME ="http://192.200.5.194:8089/";
+    private static final String DOMAIN_NAME ="http://192.200.5.194:8089/";//"http://192.168.0.9:8089/";//
 
     //登陆判断
     public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";
     public static final String LOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqLoadingInfo";
+    public static final String PRODUCTIONDETAILBYCODE_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfoDetailByCode";
     public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqAllUnLoadingInfo";
     public static final String BATCH_UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfoByBatch";
     public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
@@ -148,10 +149,8 @@ public class HttpClient {
                 stringRequest.setUri(BATCH_UNLOADING_URL);
                 result = liteHttp.execute(stringRequest);
                 List<UnLoadingInfo> lsa =Parser.parseBatchUnLoadingInfo(result.getResult(),date);
-                Log.e("testcc","parseBatchUnLoadingInfo:"+lsa.size());
                 if(lsa.size()>0){
                     UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
-//                    unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
                     unloadingInfoDataHelper.bulkInsert(lsa);
                     flag = 1;
                 }else{
@@ -163,67 +162,93 @@ public class HttpClient {
                 }
             }
 
-            if((authority&Authority.DISTRIBUTION_AUTHORITY)!= 0){
-                if(flag == 0){
-                    stringRequest.setUri(BATCH_UNLOADING_URL);
-                    result = liteHttp.execute(stringRequest);
-                    List<UnLoadingInfo> lsa =Parser.parseBatchUnLoadingInfo(result.getResult(),date);
+//            if((authority&Authority.DISTRIBUTION_AUTHORITY)!= 0){
+//                if(flag == 0){
+//                    stringRequest.setUri(BATCH_UNLOADING_URL);
+//                    result = liteHttp.execute(stringRequest);
+//                    List<UnLoadingInfo> lsa =Parser.parseBatchUnLoadingInfo(result.getResult(),date);
+//
+//                    if(lsa.size()>0){
+//                        UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
+////                        unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+//                        unloadingInfoDataHelper.bulkInsert(lsa);
+//                        flag = 1;
+//                    }else{
+//                        if(!Parser.getUnloadingErr().equals("true")){
+//                            flag = 2;
+//                        }
+//                        flag = 1;
+//                    }
+//                }
+//                if(flag == 2){
+//                    val.add("配料:"+Parser.getDistriErr());
+//                }else if(flag == 1){
+//                    stringRequest.setUri(STOREPRODUCTION_URL);
+//                    result = liteHttp.execute(stringRequest);
+//                    List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
+//                    if(lsb.size()>0){
+//                        DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
+//                        distributionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+//                        distributionInfoDataHelper.bulkInsert(lsb);
+//                    }else{
+//                        val.add("配料:"+Parser.getDistriErr());
+//                    }
+//                }
+//
+//            }
 
-                    if(lsa.size()>0){
-                        UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(MApplication.getContext());
-//                        unloadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                        unloadingInfoDataHelper.bulkInsert(lsa);
-                        flag = 1;
-                    }else{
-                        if(!Parser.getUnloadingErr().equals("true")){
-                            flag = 2;
-                        }
-                        flag = 1;
-                    }
-                }
-                if(flag == 2){
-                    val.add("配料:"+Parser.getDistriErr());
-                }else if(flag == 1){
-                    stringRequest.setUri(STOREPRODUCTION_URL);
-                    result = liteHttp.execute(stringRequest);
-                    List<DistributionInfo> lsb =Parser.parseDistriInfo(result.getResult());
-                    if(lsb.size()>0){
-                        DistributionInfoDataHelper distributionInfoDataHelper = new DistributionInfoDataHelper(MApplication.getContext());
-                        distributionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                        distributionInfoDataHelper.bulkInsert(lsb);
-                    }else{
-                        val.add("配料:"+Parser.getDistriErr());
-                    }
-                }
-
-            }
-
-            if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
-                stringRequest.setUri(PRODUCTION_URL);
-                result = liteHttp.execute(stringRequest);
-                List<ProductionInfo> lsc =Parser.parseProductionInfo(result.getResult());
-                if(lsc.size()>0){
-                    ProductionInfoDataHelper productionInfoDataHelper = new ProductionInfoDataHelper(MApplication.getContext());
-                    productionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-                    productionInfoDataHelper.bulkInsert(lsc);
-                }else{
-                    val.add("产线:"+Parser.getProductionErr());
-                }
-                stringRequest.setUri(PRODUCTIONDETAIL_URL);
-                result = liteHttp.execute(stringRequest);
-                List<ProductDetail> lsd =Parser.parseProductionDetail(result.getResult());
-                if(lsd.size()>0){
-                    ProductDetailDataHelper productDetailDataHelper = new ProductDetailDataHelper(MApplication.getContext());
-                    productDetailDataHelper.deleteByCondition("date = ?", new String[]{date});
-                    productDetailDataHelper.bulkInsert(lsd);
-                }
-
-            }
+//            if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
+//                stringRequest.setUri(PRODUCTION_URL);
+//                result = liteHttp.execute(stringRequest);
+//                List<ProductionInfo> lsc =Parser.parseProductionInfo(result.getResult());
+//                if(lsc.size()>0){
+//                    ProductionInfoDataHelper productionInfoDataHelper = new ProductionInfoDataHelper(MApplication.getContext());
+//                    productionInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+//                    productionInfoDataHelper.bulkInsert(lsc);
+//                }else{
+//                    val.add("产线:"+Parser.getProductionErr());
+//                }
+//                stringRequest.setUri(PRODUCTIONDETAIL_URL);
+//                result = liteHttp.execute(stringRequest);
+//                List<ProductDetail> lsd =Parser.parseProductionDetail(result.getResult());
+//                if(lsd.size()>0){
+//                    ProductDetailDataHelper productDetailDataHelper = new ProductDetailDataHelper(MApplication.getContext());
+//                    productDetailDataHelper.deleteByCondition("date = ?", new String[]{date});
+//                    productDetailDataHelper.bulkInsert(lsd);
+//                }
+//
+//            }
 
         }catch (Exception e) {
 
         }
         return val;
+    }
+
+    public int getProductDetailInfofByCode(String productcode,String tasknum){
+        List<ProductDetail>  val = new ArrayList<>();
+        JSONObject object = new JSONObject();
+        try {
+            object.put("tasknumber", tasknum);
+            object.put("productcode", productcode);
+        } catch (JSONException e) {
+        }
+        LinkedHashMap<String, String> header = new LinkedHashMap<>();
+        StringRequest stringRequest = new StringRequest(PRODUCTIONDETAILBYCODE_URL)
+                .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));
+        try {
+            Response<String> result;
+            result = liteHttp.execute(stringRequest);
+            val = Parser.parseProductionDetail(result.getResult());
+            if(val.size() >0){
+                    ProductDetailDataHelper productDetailDataHelper = new ProductDetailDataHelper(MApplication.getContext());
+                    productDetailDataHelper.deleteByCondition(null, null);
+                    productDetailDataHelper.bulkInsert(val);
+            }
+        }catch (Exception e) {
+
+        }
+        return val.size();
     }
 
 //    public void parse(HttpListener<String> listener, String content) {

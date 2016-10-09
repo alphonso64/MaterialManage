@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     private ArrayList<Fragment> mFragments;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +40,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottomNavigationBar
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC
                 );
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_archive_white_24dp, R.string.tab_loading).setActiveColorResource(R.color.colorPrimaryDark))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_send_white_24dp, R.string.tab_distribution).setActiveColorResource(R.color.colorPrimaryDark))
+//        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_archive_white_24dp, R.string.tab_loading).setActiveColorResource(R.color.colorPrimaryDark))
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_send_white_24dp, R.string.tab_distribution).setActiveColorResource(R.color.colorPrimaryDark))
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_drag_handle_white_24dp, R.string.tab_line).setActiveColorResource(R.color.colorPrimaryDark))
+//                .addItem(new BottomNavigationItem(R.mipmap.ic_settings_white_24dp, R.string.tab_set).setActiveColorResource(R.color.colorPrimaryDark))
+//                .setFirstSelectedPosition(0)
+//                .initialise();
+        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_drag_handle_white_24dp, R.string.tab_line).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_settings_white_24dp, R.string.tab_set).setActiveColorResource(R.color.colorPrimaryDark))
                 .setFirstSelectedPosition(0)
@@ -51,48 +55,47 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottomNavigationBar.setTabSelectedListener(this);
 
         initFragments();
-        mViewPager = (NoSrollViewPager)findViewById(R.id.viewPager) ;
+        mViewPager = (NoSrollViewPager) findViewById(R.id.viewPager);
         mViewPager.setAdapter(new MyFragmentPageAdapter(getSupportFragmentManager()));
         mViewPager.setCurrentItem(0);
         mViewPager.setOffscreenPageLimit(6);
     }
 
-    public void initFragments (){
+    public void initFragments() {
         User user = UserSharedPreferences.getCusUser(this);
         mFragments = new ArrayList<>();
 
         int index = 0;
         Integer authority;
-        try{
+        try {
             authority = Integer.parseInt(user.getAuthority());
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             authority = 0;
         }
-        Log.e("testcc","authority:"+authority);
-        int a1 = (authority&Authority.UNLOADING_AUTHORITY);
-        Log.e("testcc","authority 1:"+a1+" "+Authority.UNLOADING_AUTHORITY);
-        if((authority&Authority.LOADING_AUTHORITY)!=0){
-            mFragments.add(LoadingFragment.newInstance("入库"));
-        }else{
-            mFragments.add(TextFragment.newInstance("没有权限"));
-        }
+//        Log.e("testcc","authority:"+authority);
+//        int a1 = (authority&Authority.UNLOADING_AUTHORITY);
+//        Log.e("testcc","authority 1:"+a1+" "+Authority.UNLOADING_AUTHORITY);
+//        if ((authority & Authority.LOADING_AUTHORITY) != 0) {
+//            mFragments.add(LoadingFragment.newInstance("入库"));
+//        } else {
+//            mFragments.add(TextFragment.newInstance("没有权限"));
+//        }
 
-        if((authority&Authority.UNLOADING_AUTHORITY) != 0){
+        if ((authority & Authority.UNLOADING_AUTHORITY) != 0) {
             mFragments.add(UnloadingFragment.newInstance("出库"));
-        }else{
+        } else {
             mFragments.add(TextFragment.newInstance("没有权限"));
         }
 
-        if((authority&Authority.DISTRIBUTION_AUTHORITY)!= 0){
-            mFragments.add(DistributionFragment.newInstance("配料"));
-        }else{
-            mFragments.add(TextFragment.newInstance("没有权限"));
-        }
+//        if ((authority & Authority.DISTRIBUTION_AUTHORITY) != 0) {
+//            mFragments.add(DistributionFragment.newInstance("配料"));
+//        } else {
+//            mFragments.add(TextFragment.newInstance("没有权限"));
+//        }
 
-        if((authority&Authority.PRODUCTIONLINE_AUTHORITY) != 0){
+        if ((authority & Authority.PRODUCTIONLINE_AUTHORITY) != 0) {
             mFragments.add(ProduceLineFragment.newInstance("产线"));
-        }else{
+        } else {
             mFragments.add(TextFragment.newInstance("没有权限"));
         }
 
@@ -100,10 +103,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     }
 
 
-
     @Override
     public void onTabSelected(int position) {
-        mViewPager.setCurrentItem(position,false);
+        mViewPager.setCurrentItem(position, false);
     }
 
     @Override
@@ -121,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         public MyFragmentPageAdapter(FragmentManager fm) {
             super(fm);
         }
+
         @Override
         public int getCount() {
             return mFragments.size();

@@ -1,27 +1,30 @@
 package com.thingword.alphonso.materialmanage.fragment;
 
-import android.content.DialogInterface;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListAdapter;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -33,9 +36,11 @@ import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ReloadingScanActivity;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
+import com.thingword.alphonso.materialmanage.http.HttpClient;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +63,22 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
     private Calendar calendar;
     private ProductionInfo productionInfo;
     private static final int DATE_LIST = 1;
+    private static final int ALL_LIST = 2;
+    private ProgressDialog progressDialog;
+
+    private Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            progressDialog.dismiss();
+            if(msg.what == 0){
+                getLoaderManager().destroyLoader(ALL_LIST);
+                new MaterialDialog.Builder(getActivity()).title("无记录！").positiveText(R.string.sure).build().show();
+            }else{
+                getLoaderManager().restartLoader(ALL_LIST, null, ProduceLineFragment.this);
+            }
+        }
+    };
 
     @Nullable
     @Override
@@ -79,11 +100,14 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                         Intent intent = new Intent(getActivity(), ReloadingScanActivity.class);
                         startActivity(intent);
                         break;
+                    case R.id.line_clear:
+                        getLoaderManager().destroyLoader(ALL_LIST);
+                        break;
                     case R.id.line_cam:
-                        if(productionInfo != null){
-                            MApplication app = (MApplication) getActivity().getApplication();
-                            app.setProductionInfo(productionInfo);
-                             intent = new Intent(getActivity(), ProductionScanCamActivity.class);
+                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
+//                            MApplication app = (MApplication) getActivity().getApplication();
+//                            app.setProductionInfo(productionInfo);
+                            intent = new Intent(getActivity(), ProductionScanCamActivity.class);
                             startActivity(intent);
                         }else{
                             android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity()).
@@ -117,45 +141,79 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
     }
+    //根据产品单号获取物料清单
+//    private void loadDiag() {
+//        final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
+//                .customView(R.layout.dialog_production_calendar, true)
+//                .positiveText(R.string.sure)
+//                .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//                        String date = simpleDateFormat.format(calendar.getTime());
+//                        mPrudctionAdapter = new ProductionInfoDataHelper(getActivity());
+//                        mPrudctionCursor = mPrudctionAdapter.getDateCursor(date);
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                        builder.setTitle("选择待换线产品");
+//                        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+//                                R.layout.product_adapter_item,
+//                                mPrudctionCursor, new String[]{"spec","productcode","tasknumber"},
+//                                new int[]{R.id.title_a,R.id.title_b,R.id.title_c}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+//                        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                mPrudctionCursor.moveToPosition(i);
+//                                productionInfo = ProductionInfo.fromCursor(mPrudctionCursor);
+//                                getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
+//                            }
+//                        });
+//                        builder.show();
+//                    }
+//                })
+//                .negativeText(R.string.cancle).build();
+//        CalendarView cv = (CalendarView) materialDialog.getCustomView().findViewById(R.id.production_calendarView);
+//        calendar = Calendar.getInstance();
+//        cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+//            @Override
+//            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+//                calendar.set(year, month, dayOfMonth);
+//            }
+//        });
+//        materialDialog.show();
+//    }
 
     private void loadDiag() {
-        final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
-                .customView(R.layout.dialog_production_calendar, true)
+        final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("输入产品编码与物料单号")
+                .customView(R.layout.dialog_edittext2, true)
                 .positiveText(R.string.sure)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        String date = simpleDateFormat.format(calendar.getTime());
-                        mPrudctionAdapter = new ProductionInfoDataHelper(getActivity());
-                        mPrudctionCursor = mPrudctionAdapter.getDateCursor(date);
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("选择待换线产品");
-                        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
-                                R.layout.product_adapter_item,
-                                mPrudctionCursor, new String[]{"spec","productcode","tasknumber"},
-                                new int[]{R.id.title_a,R.id.title_b,R.id.title_c}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-                        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        EditText edit_productcode = (EditText) dialog.getCustomView().findViewById(R.id.editText_productcode);
+                        EditText edit_tasknum = (EditText) dialog.getCustomView().findViewById(R.id.editText_tasknumber);
+                        final String productcode = edit_productcode.getText().toString();
+                        final String tasknum = edit_tasknum.getText().toString();
+                        if(productcode.length() != 10 || tasknum.length() == 0){
+                            new MaterialDialog.Builder(getActivity()).title("产品编码或料单号格式错误！").positiveText(R.string.sure).build().show();
+                        }
+                        progressDialog = new ProgressDialog(getActivity());
+                        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progressDialog.setMessage("更新数据中");
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setCancelable(true);
+                        progressDialog.show();
+                        new Thread() {
                             @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                mPrudctionCursor.moveToPosition(i);
-                                productionInfo = ProductionInfo.fromCursor(mPrudctionCursor);
-                                getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
+                            public void run() {
+                                int size = HttpClient.getInstance().getProductDetailInfofByCode(productcode,tasknum);
+                                mHandler.sendEmptyMessage(size);
                             }
-                        });
-                        builder.show();
+                        }.start();
                     }
                 })
                 .negativeText(R.string.cancle).build();
-        CalendarView cv = (CalendarView) materialDialog.getCustomView().findViewById(R.id.production_calendarView);
-        calendar = Calendar.getInstance();
-        cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-                calendar.set(year, month, dayOfMonth);
-            }
-        });
         materialDialog.show();
+
     }
 
     public static ProduceLineFragment newInstance(String content) {
@@ -174,6 +232,8 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
             String date = simpleDateFormat.format(calendar.getTime());
             //return  mDataHelper.getDateCursorLoader(date);
             return mDataHelper.getDetailCursorLoader(date,productionInfo.getTasknumber(),productionInfo.getProductcode());
+        }else if(id == ALL_LIST){
+            return mDataHelper.getCursorLoader();
         }
         return null;
     }

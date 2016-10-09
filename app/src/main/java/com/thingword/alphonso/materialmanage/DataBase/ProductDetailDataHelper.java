@@ -86,4 +86,17 @@ public class ProductDetailDataHelper extends BaseDataHelper implements BaseDBInt
         return true;
     }
 
+
+    public boolean setDataChecked(String code){
+        ContentValues values = new ContentValues();
+        values.put("checked","true");
+        int count  = update(values," invcode = ?"
+                ,new String[]{Util.cutCode(code)});
+//        Log.e("testcc","checkDataValid "+count);
+        if(count == 0){
+            return  false;
+        }
+        return true;
+    }
+
 }
