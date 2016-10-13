@@ -1,24 +1,36 @@
 package com.thingword.alphonso.materialmanage.fragment;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,9 +51,12 @@ import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
 import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,6 +71,17 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     Toolbar toolbar;
     @BindView(R.id.uld_recyclerview)
     RecyclerView mRecyclerView;
+    @BindView(R.id.editText)
+    EditText editText;
+    @BindView(R.id.result_text)
+    TextView textView;
+    @BindView(R.id.result_right_text)
+    TextView scanRightView;
+    @BindView(R.id.result_wrong_text)
+    TextView scanWrongView;
+    @BindView(R.id.unloading_result_view)
+    LinearLayout resultView;
+
     private UnLoadingInfoDataHelper mDataHelper;
     private UnLoadingInfoCursorAdapter mAdapter;
 
@@ -64,6 +90,27 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     private static final int DATE_LIST_LINE = 3;
     private static final int DATE_LIST_CBATCH = 4;
     private Calendar calendar;
+
+    private Handler mHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what == 0){
+                if(isChecking){
+                    textView.setText((String)msg.obj);
+                    editText.getText().clear();
+                    checkDataValid();
+                }else{
+                    editText.getText().clear();
+                }
+            }else if(msg.what == 1){
+                scanRightView.setVisibility(View.VISIBLE);
+                scanWrongView.setVisibility(View.GONE);
+            }
+        }
+    };
+
+    private boolean isChecking;
 
 
     @Nullable
@@ -86,12 +133,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                         break;
                     case R.id.unload_cam:
                         if(mRecyclerView.getAdapter().getItemCount()!= 0){
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            String date = simpleDateFormat.format(calendar.getTime());
-                            MApplication app = (MApplication) getActivity().getApplication();
-                            app.setUnloadWorkDate(date);
-                            Intent intent = new Intent(getActivity(), ScanCamActivity.class);
-                            startActivity(intent);
+                            initCheckView();
                         }else{
                             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
                                     setTitle("工作列表不能为空").
@@ -121,7 +163,15 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
 //        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
+
+        isChecking = false;
         return view;
+    }
+
+    public void initCheckView(){
+        resultView.setVisibility(View.VISIBLE);
+        textView.setText("");
+        isChecking = true;
     }
 
     @Override
@@ -132,6 +182,34 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
 //        mAdapter.setOnItemClickListener(itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
+        editText.setInputType(InputType.TYPE_NULL);
+        Log.e("testcc","editText.setInputType(InputType.TYPE_NULL);");
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String val = s.toString();
+                if(val.endsWith(" ")){
+                    Message msg = mHandler.obtainMessage();
+                    msg.what = 0;
+                    msg.obj = val;
+                    mHandler.sendMessage(msg);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        editText.setInputType(InputType.TYPE_NULL);
+        Log.e("testcc","resum editText.setInputType(InputType.TYPE_NULL);");
+        super.onResume();
+
     }
 
     public static UnloadingFragment newInstance(String content) {
@@ -150,6 +228,11 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
 
 
     private void loadDiag() {
+//        Resources res = getResources();
+//        DisplayMetrics dm = res.getDisplayMetrics();
+//        android.content.res.Configuration conf = res.getConfiguration();
+//        conf.locale = Locale.SIMPLIFIED_CHINESE;
+//        res.updateConfiguration(conf, dm);
         final Calendar tempCalendar = Calendar.getInstance();
         MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
                 .customView(R.layout.dialog_unload_calendar, true)
@@ -157,6 +240,8 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+
                         calendar = tempCalendar;
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         String date = simpleDateFormat.format(calendar.getTime());
@@ -240,4 +325,103 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     public void onLoaderReset(Loader<Cursor> loader) {
         mAdapter.changeCursor(null);
     }
+
+    private void checkDataValid(){
+        //boolean res = unLoadingInfoDataHelper.setDataChecked(date,parsedResult.getDisplayResult());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = simpleDateFormat.format(calendar.getTime());
+        String parsedResult = textView.getText().toString();
+        parsedResult = parsedResult.substring(0,parsedResult.length()-1);
+        String employname = UserSharedPreferences.getCusUser(MApplication.getContext()).getEmploy_name();
+        Cursor cursor = mDataHelper.getDataCheckedCurosr(date,parsedResult,
+                employname);
+        Cursor cursor_ = mDataHelper.getDataCheckedCurosr_(date,parsedResult,
+                employname);
+        if(cursor.getCount() == 1){
+            scanRightView.setVisibility(View.VISIBLE);
+            scanWrongView.setVisibility(View.GONE);
+            mDataHelper.updateData(UnLoadingInfo.fromCursor(cursor));
+        }else if(cursor.getCount() == 0){
+            cursor = mDataHelper.getDataCheckedFuzyCurosr(date,parsedResult,
+                    employname);
+            cursor_ = mDataHelper.getDataCheckedFuzyCurosr_(date,parsedResult,
+                    employname);
+            if(cursor.getCount() >= 1){
+                LoadFuzyDialpg(cursor,cursor_);
+            }else if(cursor.getCount() == 0){
+                scanWrongView.setVisibility(View.VISIBLE);
+                scanRightView.setVisibility(View.GONE);
+            }
+        }else{
+            if(cursor_.getCount() > 0){
+                LoadDialog(cursor_);
+            }
+            scanRightView.setVisibility(View.VISIBLE);
+            scanWrongView.setVisibility(View.GONE);
+        }
+    }
+
+    private void LoadFuzyDialpg(final Cursor cusor,final Cursor cusor_){
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("注意！");
+        builder.setMessage("条码正确，批次错误，确认继续？");
+        builder.setNegativeButton(R.string.cancle,null);
+        builder.setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(cusor.getCount() == 1){
+                    mDataHelper.updateData_(UnLoadingInfo.fromCursor(cusor));
+                    mHandler.sendEmptyMessage(1);
+                }else{
+                    if(cusor_.getCount()>0){
+                        LoadFuzyDialogInner(cusor_);
+                    }else{
+                        mHandler.sendEmptyMessage(1);
+                    }
+                }
+
+            }
+        });
+        builder.show();
+    }
+
+    private  void LoadFuzyDialogInner(final Cursor cursor){
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("选择对应型号");
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+                R.layout.product_adapter_item4,
+                cursor, new String[]{"cInvName","invcode","cMoCode","iQuantity"},
+                new int[]{R.id.title_a,R.id.title_b,R.id.title_c,R.id.title_d}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                cursor.moveToPosition(i);
+                UnLoadingInfo unLoadingInfo = UnLoadingInfo.fromCursor(cursor);
+                mDataHelper.updateData_(unLoadingInfo);
+                mHandler.sendEmptyMessage(1);
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    private  void LoadDialog(final Cursor cursor){
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("选择对应型号");
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+                R.layout.product_adapter_item4,
+                cursor, new String[]{"cInvName","invcode","cMoCode","iQuantity"},
+                new int[]{R.id.title_a,R.id.title_b,R.id.title_c,R.id.title_d}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                cursor.moveToPosition(i);
+                UnLoadingInfo unLoadingInfo = UnLoadingInfo.fromCursor(cursor);
+                mDataHelper.updateData(unLoadingInfo);
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
 }

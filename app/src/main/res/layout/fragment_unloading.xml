@@ -15,6 +15,58 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/editText"
+        android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:id="@+id/unloading_result_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/viewfinder_mask"
+        android:baselineAligned="false"
+        android:paddingTop="5dp"
+        android:padding="5dp"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:textColor="@color/black"
+            android:text="条码正确asdasdasdasdasddasd"/>
+
+        <TextView
+            android:id="@+id/result_right_text"
+            android:paddingTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            android:textColor="@color/right_color"
+            android:text="条码正确"/>
+
+        <TextView
+            android:id="@+id/result_wrong_text"
+            android:paddingTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:textColor="@color/wrong_color"
+            android:text="条码错误"/>
+
+
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/uld_recyclerview"
         android:layout_height="match_parent"

@@ -1,5 +1,7 @@
 package com.thingword.alphonso.materialmanage;
 
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -7,7 +9,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
@@ -24,6 +28,7 @@ import com.thingword.alphonso.materialmanage.view.NoSrollViewPager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener {
     private NoSrollViewPager mViewPager;
@@ -59,6 +64,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         mViewPager.setAdapter(new MyFragmentPageAdapter(getSupportFragmentManager()));
         mViewPager.setCurrentItem(0);
         mViewPager.setOffscreenPageLimit(6);
+
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        android.content.res.Configuration conf = res.getConfiguration();
+        conf.locale = Locale.ENGLISH;
+        res.updateConfiguration(conf, dm);
     }
 
     public void initFragments() {

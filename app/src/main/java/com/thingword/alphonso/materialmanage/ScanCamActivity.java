@@ -162,7 +162,7 @@ public class ScanCamActivity extends CaptureActivity{
 
     private  void LoadFuzyDialogInner(final Cursor cursor){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("选择对应得型号");
+        builder.setTitle("选择对应型号");
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.product_adapter_item4,
                 cursor, new String[]{"cInvName","invcode","cMoCode","iQuantity"},
@@ -182,7 +182,7 @@ public class ScanCamActivity extends CaptureActivity{
 
     private  void LoadDialog(final Cursor cursor){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("选择对应得型号");
+        builder.setTitle("选择对应型号");
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.product_adapter_item4,
                 cursor, new String[]{"cInvName","invcode","cMoCode","iQuantity"},

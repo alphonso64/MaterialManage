@@ -38,6 +38,8 @@ import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -183,6 +185,20 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
 //    }
 
     private void loadDiag() {
+        try {
+            //获得外接USB输入设备的信息
+            Process p=Runtime.getRuntime().exec("cat /proc/bus/input/devices");
+            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line = null;
+            while((line = in.readLine())!= null){
+                String deviceInfo = line.trim();
+                System.out.println("deviceInfo:"+deviceInfo);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("输入产品编码与物料单号")
                 .customView(R.layout.dialog_edittext2, true)
                 .positiveText(R.string.sure)
@@ -223,6 +239,8 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
         fragment.setArguments(args);
         return fragment;
     }
+
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
