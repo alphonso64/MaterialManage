@@ -30,7 +30,6 @@
         android:baselineAligned="false"
         android:paddingTop="5dp"
         android:padding="5dp"
-        android:visibility="gone"
         android:orientation="vertical">
 
         <TextView
@@ -39,8 +38,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:layout_gravity="center"
-            android:textColor="@color/black"
-            android:text="条码正确asdasdasdasdasddasd"/>
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/result_right_text"
@@ -63,8 +61,6 @@
             android:visibility="gone"
             android:textColor="@color/wrong_color"
             android:text="条码错误"/>
-
-
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

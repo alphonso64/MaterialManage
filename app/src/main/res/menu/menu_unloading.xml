@@ -23,6 +23,7 @@
         android:icon="@mipmap/ic_camera_alt_white_24dp"
         android:orderInCategory="90"
         android:title="@string/cam_title"
+        android:visible="false"
         app:showAsAction="always" />
 
     <item

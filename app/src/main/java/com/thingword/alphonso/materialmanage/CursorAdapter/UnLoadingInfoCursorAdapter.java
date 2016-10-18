@@ -88,7 +88,7 @@ public class UnLoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter
             ((CusViewHolder) holder).title_c2.setText(ld.getLinenum());
         }
         ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
-        ((CusViewHolder) holder).title_d2.setText(ld.getDate());
+        ((CusViewHolder) holder).title_d2.setText(String.valueOf(cursor.getPosition()));
     }
 
     @Override

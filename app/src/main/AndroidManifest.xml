@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".ReloadingScanActivity">
         </activity>
+        <activity android:name=".ReloadingGunScanActivity">
+        </activity>
         <activity android:name=".ProductionScanCamActivity">
         </activity>
         <activity android:name=".LoadScanCamActivity">

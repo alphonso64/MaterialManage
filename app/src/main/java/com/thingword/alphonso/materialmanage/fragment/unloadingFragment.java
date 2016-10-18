@@ -101,6 +101,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                     editText.getText().clear();
                     checkDataValid();
                 }else{
+                    textView.setText((String)msg.obj);
                     editText.getText().clear();
                 }
             }else if(msg.what == 1){
@@ -130,17 +131,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                         break;
                     case R.id.unload_clear:
                         getLoaderManager().destroyLoader(DATE_LIST);
-                        break;
-                    case R.id.unload_cam:
-                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
-                            initCheckView();
-                        }else{
-                            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
-                                    setTitle("工作列表不能为空").
-                                    setPositiveButton("确定",null)
-                                    .create();
-                            alertDialog.show();
-                        }
+                        uninitCheckView();
                         break;
                     case R.id.unload_name_sort:
                         if(mRecyclerView.getAdapter().getItemCount()!= 0){
@@ -163,7 +154,6 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
 //        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
-
         isChecking = false;
         return view;
     }
@@ -171,7 +161,17 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     public void initCheckView(){
         resultView.setVisibility(View.VISIBLE);
         textView.setText("");
+        scanRightView.setVisibility(View.INVISIBLE);
+        scanWrongView.setVisibility(View.GONE);
         isChecking = true;
+    }
+
+    public void uninitCheckView(){
+        resultView.setVisibility(View.VISIBLE);
+        textView.setText("");
+        scanRightView.setVisibility(View.INVISIBLE);
+        scanWrongView.setVisibility(View.GONE);
+        isChecking = false;
     }
 
     @Override
@@ -183,7 +183,6 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
         editText.setInputType(InputType.TYPE_NULL);
-        Log.e("testcc","editText.setInputType(InputType.TYPE_NULL);");
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -204,14 +203,6 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
         });
     }
 
-    @Override
-    public void onResume() {
-        editText.setInputType(InputType.TYPE_NULL);
-        Log.e("testcc","resum editText.setInputType(InputType.TYPE_NULL);");
-        super.onResume();
-
-    }
-
     public static UnloadingFragment newInstance(String content) {
         Bundle args = new Bundle();
         args.putString("ARGS", content);
@@ -228,11 +219,6 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
 
 
     private void loadDiag() {
-//        Resources res = getResources();
-//        DisplayMetrics dm = res.getDisplayMetrics();
-//        android.content.res.Configuration conf = res.getConfiguration();
-//        conf.locale = Locale.SIMPLIFIED_CHINESE;
-//        res.updateConfiguration(conf, dm);
         final Calendar tempCalendar = Calendar.getInstance();
         MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
                 .customView(R.layout.dialog_unload_calendar, true)
@@ -240,14 +226,13 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
-
                         calendar = tempCalendar;
                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                         String date = simpleDateFormat.format(calendar.getTime());
                         TextView tx = (TextView) dialog.getCustomView().findViewById(R.id.excutor);
                         String person = tx.getText().toString();
                         getLoaderManager().restartLoader(DATE_LIST, null, UnloadingFragment.this);
+                        initCheckView();
                     }
                 })
                 .negativeText(R.string.cancle).build();
@@ -263,35 +248,6 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
         materialDialog.show();
-    }
-
-    public void setUnLoadingInfoHttpReq(final String date, String person) {
-        HttpListener listener = new HttpListener<String>() {
-            @Override
-            public void onSuccess(String s, Response<String> response) {
-                syncUnLoadingInfo(s, date);
-            }
-
-            @Override
-            public void onFailure(HttpException e, Response<String> response) {
-            }
-        };
-        HttpClient.getInstance().getUnLoadingInfo(listener, date, person);
-    }
-
-    public void syncUnLoadingInfo(String content, String date) {
-        getLoaderManager().restartLoader(DATE_LIST, null, this);
-        List<UnLoadingInfo> ls = Parser.parseUnLoadingInfo(content);
-        if (ls.isEmpty()) {
-            Toast toast = Toast.makeText(getActivity(),
-                    R.string.no_record, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-        } else {
-            UnLoadingInfoDataHelper unloadingInfoDataHelper = new UnLoadingInfoDataHelper(getActivity());
-            unloadingInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
-            unloadingInfoDataHelper.bulkInsert(ls);
-        }
     }
 
     @Override

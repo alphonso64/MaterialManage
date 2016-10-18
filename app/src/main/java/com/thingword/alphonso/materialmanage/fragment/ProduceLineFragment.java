@@ -17,6 +17,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,7 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -33,6 +38,7 @@ import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.ProductionScanCamActivity;
 import com.thingword.alphonso.materialmanage.R;
+import com.thingword.alphonso.materialmanage.ReloadingGunScanActivity;
 import com.thingword.alphonso.materialmanage.ReloadingScanActivity;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
@@ -57,11 +63,19 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
     Toolbar toolbar;
     @BindView(R.id.productLine_recyclerview)
     RecyclerView mRecyclerView;
+    @BindView(R.id.pline_editText)
+    EditText editText;
+    @BindView(R.id.pline_result_text)
+    TextView textView;
+    @BindView(R.id.pline_result_right_text)
+    TextView scanRightView;
+    @BindView(R.id.pline_result_wrong_text)
+    TextView scanWrongView;
+    @BindView(R.id.pline_result_view)
+    LinearLayout resultView;
 
     private ProductDetailDataHelper mDataHelper;
     private ProductDetailCursorAdapter mAdapter;
-    private Cursor  mPrudctionCursor;
-    private ProductionInfoDataHelper mPrudctionAdapter;
     private Calendar calendar;
     private ProductionInfo productionInfo;
     private static final int DATE_LIST = 1;
@@ -72,15 +86,50 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
 
         @Override
         public void handleMessage(Message msg) {
-            progressDialog.dismiss();
-            if(msg.what == 0){
-                getLoaderManager().destroyLoader(ALL_LIST);
-                new MaterialDialog.Builder(getActivity()).title("无记录！").positiveText(R.string.sure).build().show();
-            }else{
-                getLoaderManager().restartLoader(ALL_LIST, null, ProduceLineFragment.this);
+            if(msg.what == 2){
+                progressDialog.dismiss();
+                int size = (int) msg.obj;
+                if(size == 0){
+                    getLoaderManager().destroyLoader(ALL_LIST);
+                    new MaterialDialog.Builder(getActivity()).title("无记录！").positiveText(R.string.sure).build().show();
+                }else{
+                    initCheckView();
+                    getLoaderManager().restartLoader(ALL_LIST, null, ProduceLineFragment.this);
+                }
+            }else if(msg.what == 0){
+                if(isChecking){
+                    textView.setText((String)msg.obj);
+                    editText.getText().clear();
+                    checkDataValid();
+                }else{
+                    textView.setText((String)msg.obj);
+                    editText.getText().clear();
+                }
+            }else if(msg.what == 1){
+                scanRightView.setVisibility(View.VISIBLE);
+                scanWrongView.setVisibility(View.GONE);
             }
+
         }
     };
+
+    private boolean isChecking;
+
+    public void initCheckView(){
+        resultView.setVisibility(View.VISIBLE);
+        textView.setText("");
+        scanRightView.setVisibility(View.INVISIBLE);
+        scanWrongView.setVisibility(View.GONE);
+        isChecking = true;
+    }
+
+    public void uninitCheckView(){
+        resultView.setVisibility(View.VISIBLE);
+        textView.setText("");
+        scanRightView.setVisibility(View.INVISIBLE);
+        scanWrongView.setVisibility(View.GONE);
+        isChecking = false;
+    }
 
     @Nullable
     @Override
@@ -88,7 +137,6 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
         View view = inflater.inflate(R.layout.fragment_producline, container, false);
         unbinder = ButterKnife.bind(this, view);
         toolbar.setTitle(R.string.tab_line);
-        ;
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         toolbar.inflateMenu(R.menu.menu_line);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -99,25 +147,12 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                         loadDiag();
                         break;
                     case R.id.line_reloading:
-                        Intent intent = new Intent(getActivity(), ReloadingScanActivity.class);
+                        Intent intent = new Intent(getActivity(), ReloadingGunScanActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.line_clear:
                         getLoaderManager().destroyLoader(ALL_LIST);
-                        break;
-                    case R.id.line_cam:
-                        if(mRecyclerView.getAdapter().getItemCount()!= 0){
-//                            MApplication app = (MApplication) getActivity().getApplication();
-//                            app.setProductionInfo(productionInfo);
-                            intent = new Intent(getActivity(), ProductionScanCamActivity.class);
-                            startActivity(intent);
-                        }else{
-                            android.app.AlertDialog alertDialog = new android.app.AlertDialog.Builder(getActivity()).
-                                    setTitle("请添加工作列表").
-                                    setPositiveButton("确定",null)
-                                    .create();
-                            alertDialog.show();
-                        }
+                        uninitCheckView();
                         break;
                     default:
                 }
@@ -125,7 +160,7 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
             }
         });
         SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
-
+        isChecking = false;
         return view;
     }
 
@@ -142,63 +177,30 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
         //mAdapter.setOnItemClickListener(itemClickListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
+
+        editText.setInputType(InputType.TYPE_NULL);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String val = s.toString();
+                if(val.endsWith(" ")){
+                    Message msg = mHandler.obtainMessage();
+                    msg.what = 0;
+                    msg.obj = val;
+                    mHandler.sendMessage(msg);
+                }
+            }
+        });
+
     }
-    //根据产品单号获取物料清单
-//    private void loadDiag() {
-//        final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("选择日期")
-//                .customView(R.layout.dialog_production_calendar, true)
-//                .positiveText(R.string.sure)
-//                .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                    @Override
-//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//                        String date = simpleDateFormat.format(calendar.getTime());
-//                        mPrudctionAdapter = new ProductionInfoDataHelper(getActivity());
-//                        mPrudctionCursor = mPrudctionAdapter.getDateCursor(date);
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                        builder.setTitle("选择待换线产品");
-//                        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
-//                                R.layout.product_adapter_item,
-//                                mPrudctionCursor, new String[]{"spec","productcode","tasknumber"},
-//                                new int[]{R.id.title_a,R.id.title_b,R.id.title_c}, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-//                        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                mPrudctionCursor.moveToPosition(i);
-//                                productionInfo = ProductionInfo.fromCursor(mPrudctionCursor);
-//                                getLoaderManager().restartLoader(DATE_LIST, null, ProduceLineFragment.this);
-//                            }
-//                        });
-//                        builder.show();
-//                    }
-//                })
-//                .negativeText(R.string.cancle).build();
-//        CalendarView cv = (CalendarView) materialDialog.getCustomView().findViewById(R.id.production_calendarView);
-//        calendar = Calendar.getInstance();
-//        cv.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-//            @Override
-//            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-//                calendar.set(year, month, dayOfMonth);
-//            }
-//        });
-//        materialDialog.show();
-//    }
 
     private void loadDiag() {
-        try {
-            //获得外接USB输入设备的信息
-            Process p=Runtime.getRuntime().exec("cat /proc/bus/input/devices");
-            BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line = null;
-            while((line = in.readLine())!= null){
-                String deviceInfo = line.trim();
-                System.out.println("deviceInfo:"+deviceInfo);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("输入产品编码与物料单号")
                 .customView(R.layout.dialog_edittext2, true)
                 .positiveText(R.string.sure)
@@ -221,8 +223,10 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                         new Thread() {
                             @Override
                             public void run() {
-                                int size = HttpClient.getInstance().getProductDetailInfofByCode(productcode,tasknum);
-                                mHandler.sendEmptyMessage(size);
+                                Message msg = mHandler.obtainMessage();
+                                msg.what = 2;
+                                msg.obj = HttpClient.getInstance().getProductDetailInfofByCode(productcode,tasknum);
+                                mHandler.sendMessage(msg);
                             }
                         }.start();
                     }
@@ -240,15 +244,12 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
         return fragment;
     }
 
-
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         if (id == DATE_LIST) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String date = simpleDateFormat.format(calendar.getTime());
-            //return  mDataHelper.getDateCursorLoader(date);
             return mDataHelper.getDetailCursorLoader(date,productionInfo.getTasknumber(),productionInfo.getProductcode());
         }else if(id == ALL_LIST){
             return mDataHelper.getCursorLoader();
@@ -265,4 +266,20 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
     public void onLoaderReset(Loader<Cursor> loader) {
         mAdapter.changeCursor(null);
     }
+
+    private void checkDataValid(){
+        String parsedResult = textView.getText().toString();
+        parsedResult = parsedResult.substring(0,parsedResult.length()-1);
+        boolean res = mDataHelper.setDataChecked(parsedResult);
+        if(res){
+            scanRightView.setVisibility(View.VISIBLE);
+            scanWrongView.setVisibility(View.GONE);
+        }else{
+            scanWrongView.setVisibility(View.VISIBLE);
+            scanRightView.setVisibility(View.GONE);
+        }
+    }
 }
+
+
+

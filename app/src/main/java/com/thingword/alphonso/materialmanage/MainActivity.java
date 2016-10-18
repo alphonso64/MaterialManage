@@ -65,11 +65,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         mViewPager.setCurrentItem(0);
         mViewPager.setOffscreenPageLimit(6);
 
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        android.content.res.Configuration conf = res.getConfiguration();
-        conf.locale = Locale.ENGLISH;
-        res.updateConfiguration(conf, dm);
+//        Resources res = getResources();
+//        DisplayMetrics dm = res.getDisplayMetrics();
+//        android.content.res.Configuration conf = res.getConfiguration();
+//        conf.locale = Locale.ENGLISH;
+//        res.updateConfiguration(conf, dm);
     }
 
     public void initFragments() {

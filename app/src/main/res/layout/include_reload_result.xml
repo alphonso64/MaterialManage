@@ -10,10 +10,11 @@
     android:orientation="vertical">
     <TextView
         android:id="@+id/relodscan_right_text"
-        android:paddingTop="10dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:visibility="invisible"
         android:textColor="@color/right_color"
@@ -21,10 +22,11 @@
 
     <TextView
         android:id="@+id/relodscan_wrong_text"
-        android:paddingTop="10dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:layout_gravity="center"
         android:visibility="gone"
         android:textColor="@color/wrong_color"
