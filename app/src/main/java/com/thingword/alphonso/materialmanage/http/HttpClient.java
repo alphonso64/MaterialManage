@@ -40,7 +40,7 @@ import java.util.List;
 public class HttpClient {
     private LiteHttp liteHttp;
     private static HttpClient single = null;
-    private static final String DOMAIN_NAME ="http://192.168.3.21:8089/";////"http://192.200.5.194:8089/";//"http://192.168.0.9:8089/";//
+    private static final String DOMAIN_NAME ="http://192.168.0.9:8089/";//"http://192.168.3.21:8089/";////"http://192.200.5.194:8089/";//
 
     //登陆判断
     public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +47,7 @@ import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ScanCamActivity;
+import com.thingword.alphonso.materialmanage.Util.BarCodeCreator;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
@@ -54,6 +57,7 @@ import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -89,6 +93,11 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     private static final int DATE_LIST_NAME = 2;
     private static final int DATE_LIST_LINE = 3;
     private static final int DATE_LIST_CBATCH = 4;
+
+    private int printnum;
+    private int printmaxNum = 10;
+    private int printminNum = 1;
+
     private Calendar calendar;
 
     private Handler mHandler = new Handler() {
@@ -133,6 +142,12 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                         getLoaderManager().destroyLoader(DATE_LIST);
                         uninitCheckView();
                         break;
+                    case R.id.unload_print:
+                        String res = textView.getText().toString();
+                        if(res.length()>0){
+                            loadPrintDialog(res.substring(0,res.length()-1));
+                        }
+                        break;
                     case R.id.unload_name_sort:
                         if(mRecyclerView.getAdapter().getItemCount()!= 0){
                             getLoaderManager().restartLoader(DATE_LIST_NAME, null, UnloadingFragment.this);
@@ -156,6 +171,51 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
 //        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
         isChecking = false;
         return view;
+    }
+
+    private void loadPrintDialog(final String res) {
+        printnum = 1;
+        MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("打印条码")
+                .customView(R.layout.dialog_unload_print, true).onNeutral(new MaterialDialog.SingleButtonCallback(){
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        List<Bitmap> list = new ArrayList<Bitmap>();
+                        Bitmap newb =  BarCodeCreator.createBarcode(BarCodeCreator.FORMAT_4015,res);
+                        list.add(newb);
+                        try {
+                            MApplication app = (MApplication) getActivity().getApplication();
+                            int printInt = app.getPrinter().printLable(list, printnum, -1, getActivity(),"");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } )
+                .negativeText(R.string.cancle).neutralText(R.string.print).build();
+        TextView tx = (TextView) materialDialog.getCustomView().findViewById(R.id.d_un_barcode);
+        tx.setText(res);
+        final TextView printnumtx = (TextView) materialDialog.getCustomView().findViewById(R.id.d_un_printnum);
+        printnumtx.setText(String.valueOf(printnum));
+        ImageView img = (ImageView) materialDialog.getCustomView().findViewById(R.id.d_un_pnum_add);
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(printnum<printmaxNum) {
+                    printnum++;
+                    printnumtx.setText(String.format("%01d", printnum));
+                }
+            }
+        });
+        img = (ImageView) materialDialog.getCustomView().findViewById(R.id.d_un_pnum_minnus);
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(printnum>printminNum) {
+                    printnum--;
+                    printnumtx.setText(String.format("%01d", printnum));
+                }
+            }
+        });
+        materialDialog.show();
     }
 
     public void initCheckView(){
