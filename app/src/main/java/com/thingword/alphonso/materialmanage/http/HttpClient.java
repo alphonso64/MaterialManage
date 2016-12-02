@@ -14,11 +14,15 @@ import com.litesuits.http.request.content.JsonBody;
 import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper;
+import com.thingword.alphonso.materialmanage.DataBase.DoMainSharedPreferences;
 import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
+import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
+import com.thingword.alphonso.materialmanage.Util.CLog;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.BatchData;
+import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
@@ -40,26 +44,31 @@ import java.util.List;
 public class HttpClient {
     private LiteHttp liteHttp;
     private static HttpClient single = null;
-    private static final String DOMAIN_NAME ="http://192.168.0.9:8089/";//"http://192.168.3.21:8089/";////"http://192.200.5.194:8089/";//
+    private static  String DOMAIN_NAME ;//="http://192.168.3.21:8089/";////"http://192.200.5.194:8089/";//"http://192.168.0.9:8089/";//
 
     //登陆判断
-    public static final String LOGIN_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUserLoginInfo";
-    public static final String LOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqLoadingInfo";
-    public static final String PRODUCTIONDETAILBYCODE_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfoDetailByCode";
-    public static final String UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqAllUnLoadingInfo";
-    public static final String BATCH_UNLOADING_URL = DOMAIN_NAME + "TestServer/rest/materail/reqUnLoadingInfoByBatch";
-    public static final String DISTRI_URL = DOMAIN_NAME + "TestServer/rest/materail/reqDistriInfo";
-    public static final String STOREPRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqStoreProductionInfo";
-    public static final String PRODUCTION_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfo";
-    public static final String PRODUCTIONDETAIL_URL = DOMAIN_NAME + "TestServer/rest/materail/reqProductionInfoDetail";
+    public static final String LOGIN_URL =  "TestServer/rest/materail/reqUserLoginInfo";
+    public static final String LOADING_URL = "TestServer/rest/materail/reqLoadingInfo";
+    public static final String PRODUCTIONDETAILBYCODE_URL =  "TestServer/rest/materail/reqProductionInfoDetailByCode";
+    public static final String UNLOADING_URL =  "TestServer/rest/materail/reqAllUnLoadingInfo";
+    public static final String BATCH_UNLOADING_URL = "TestServer/rest/materail/reqUnLoadingInfoByBatch";
+    public static final String DISTRI_URL = "TestServer/rest/materail/reqDistriInfo";
+    public static final String STOREPRODUCTION_URL =  "TestServer/rest/materail/reqStoreProductionInfo";
+    public static final String PRODUCTION_URL ="TestServer/rest/materail/reqProductionInfo";
+    public static final String PRODUCTIONDETAIL_URL =  "TestServer/rest/materail/reqProductionInfoDetail";
 
     private HttpClient() {
+        DOMAIN_NAME = DoMainSharedPreferences.getIP(MApplication.getContext());
         liteHttp = LiteHttp.build(null)
-                .setHttpClient(new HttpUrlClient())       // http
+                .setHttpClient(new HttpUrlClient())      // http
                 .setUserAgent("Mozilla/5.0 (...)")  // set custom User-Agent
-                .setSocketTimeout(10000)           // socket timeout: 10s
-                .setConnectTimeout(10000)         // connect timeout: 10s
+                .setSocketTimeout(3000)           // socket timeout: 10s
+                .setConnectTimeout(3000)// connect timeout: 10s
                 .create();
+    }
+
+    public static void changeIP(String ip){
+        DOMAIN_NAME = ip;
     }
 
     public static HttpClient getInstance() {
@@ -78,41 +87,41 @@ public class HttpClient {
         } catch (JSONException e) {
             return;
         }
-        StringRequest stringRequest = new StringRequest(LOGIN_URL)
+        CLog.e("testcc",DOMAIN_NAME+LOGIN_URL);
+        StringRequest stringRequest = new StringRequest(DOMAIN_NAME+LOGIN_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
-
         liteHttp.executeAsync(stringRequest);
     }
 
-    public void getLoadingInfo(HttpListener<String> listener, String date, String person) {
-        if (listener == null || date == null || person == null) return;
-        JSONObject object = new JSONObject();
-        try {
-            object.put("date", date);
-            object.put("person", person);
-        } catch (JSONException e) {
-            return;
-        }
-        StringRequest stringRequest = new StringRequest(LOADING_URL)
-                .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
-
-        liteHttp.executeAsync(stringRequest);
-    }
-
-    public void getUnLoadingInfo(HttpListener<String> listener, String date, String person) {
-        if (listener == null || date == null || person == null) return;
-        JSONObject object = new JSONObject();
-        try {
-            object.put("date", date);
-            object.put("person", person);
-        } catch (JSONException e) {
-            return;
-        }
-        StringRequest stringRequest = new StringRequest(UNLOADING_URL)
-                .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
-
-        liteHttp.executeAsync(stringRequest);
-    }
+//    public void getLoadingInfo(HttpListener<String> listener, String date, String person) {
+//        if (listener == null || date == null || person == null) return;
+//        JSONObject object = new JSONObject();
+//        try {
+//            object.put("date", date);
+//            object.put("person", person);
+//        } catch (JSONException e) {
+//            return;
+//        }
+//        StringRequest stringRequest = new StringRequest(DOMAIN_NAME+LOADING_URL)
+//                .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
+//
+//        liteHttp.executeAsync(stringRequest);
+//    }
+//
+//    public void getUnLoadingInfo(HttpListener<String> listener, String date, String person) {
+//        if (listener == null || date == null || person == null) return;
+//        JSONObject object = new JSONObject();
+//        try {
+//            object.put("date", date);
+//            object.put("person", person);
+//        } catch (JSONException e) {
+//            return;
+//        }
+//        StringRequest stringRequest = new StringRequest(DOMAIN_NAME+UNLOADING_URL)
+//                .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
+//
+//        liteHttp.executeAsync(stringRequest);
+//    }
 
     public List<String> getAllInfo(String date,String name,String linenum,int authority){
         List<String>  val = new ArrayList<>();
@@ -126,7 +135,7 @@ public class HttpClient {
         LinkedHashMap<String, String> header = new LinkedHashMap<>();
 //        header.put("contentType", "utf-8");
 //        header.put("Content-type", "application/x-java-serialized-object");
-        StringRequest stringRequest = new StringRequest(LOADING_URL)
+        StringRequest stringRequest = new StringRequest(DOMAIN_NAME+LOADING_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));
         try {
             Response<String> result;
@@ -146,7 +155,7 @@ public class HttpClient {
             int flag = 0;
 
             if((authority&Authority.UNLOADING_AUTHORITY) != 0){
-                stringRequest.setUri(BATCH_UNLOADING_URL);
+                stringRequest.setUri(DOMAIN_NAME+BATCH_UNLOADING_URL);
                 result = liteHttp.execute(stringRequest);
                 List<UnLoadingInfo> lsa =Parser.parseBatchUnLoadingInfo(result.getResult(),date);
                 if(lsa.size()>0){
@@ -234,16 +243,16 @@ public class HttpClient {
         } catch (JSONException e) {
         }
         LinkedHashMap<String, String> header = new LinkedHashMap<>();
-        StringRequest stringRequest = new StringRequest(PRODUCTIONDETAILBYCODE_URL)
+        StringRequest stringRequest = new StringRequest(DOMAIN_NAME+PRODUCTIONDETAILBYCODE_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));
         try {
             Response<String> result;
             result = liteHttp.execute(stringRequest);
             val = Parser.parseProductionDetail(result.getResult());
             if(val.size() >0){
-                    ProductDetailDataHelper productDetailDataHelper = new ProductDetailDataHelper(MApplication.getContext());
-                    productDetailDataHelper.deleteByCondition(null, null);
-                    productDetailDataHelper.bulkInsert(val);
+                ProductDetailDataHelper productDetailDataHelper = new ProductDetailDataHelper(MApplication.getContext());
+                productDetailDataHelper.deleteByCondition(null, null);
+                productDetailDataHelper.bulkInsert(val);
             }
         }catch (Exception e) {
 

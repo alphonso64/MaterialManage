@@ -34,7 +34,6 @@ public class CupboardDBHelper extends SQLiteOpenHelper {
 
     public CupboardDBHelper(Context context,String name) {
         super(context,  DATABASE_NAME + "_"+name + ".db", null, DB_BASE_VERSION);
-        Log.e("testcc", DATABASE_NAME + "_"+name + ".db");
         this.name = name;
     }
 

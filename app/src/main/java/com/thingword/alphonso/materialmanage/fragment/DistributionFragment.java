@@ -189,7 +189,6 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
         builder.setTitle("选择产品");
         final Cursor cusor = disDataHelper.getWorshopCursor(pos);
-//        Log.e("testcc","loadStoreProductionInfoView "+cusor.getCount());
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
                 R.layout.product_adapter_item4,
                 cusor, new String[]{"spec","productcode","tasknumber","productline"},

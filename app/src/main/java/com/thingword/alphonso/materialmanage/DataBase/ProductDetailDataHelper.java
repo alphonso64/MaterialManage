@@ -78,8 +78,6 @@ public class ProductDetailDataHelper extends BaseDataHelper implements BaseDBInt
         int count  = update(values,"date = ? and tasknumber = ? and productcode = ? and invcode = ?"
                 ,new String[]{productionInfo.getDate(),Util.fillTaskCode(productionInfo.getTasknumber())
                         ,productionInfo.getProductcode(),Util.cutCode(code)});
-        Log.e("testcc","setDataChecke "+Util.cutCode(code));
-//        Log.e("testcc","checkDataValid "+count);
         if(count == 0){
             return  false;
         }
@@ -92,7 +90,6 @@ public class ProductDetailDataHelper extends BaseDataHelper implements BaseDBInt
         values.put("checked","true");
         int count  = update(values," invcode = ?"
                 ,new String[]{Util.cutCode(code)});
-//        Log.e("testcc","checkDataValid "+count);
         if(count == 0){
             return  false;
         }

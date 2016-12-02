@@ -177,34 +177,34 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
         materialDialog.show();
     }
 
-    public void setLoadingInfoHttpReq(final String date, String person) {
-        HttpListener listener = new HttpListener<String>() {
-            @Override
-            public void onSuccess(String s, Response<String> response) {
-                syncLoadingInfo(s, date);
-            }
-
-            @Override
-            public void onFailure(HttpException e, Response<String> response) {
-            }
-        };
-        HttpClient.getInstance().getLoadingInfo(listener, date, person);
-    }
-
-    public void syncLoadingInfo(String content, String date) {
-        getLoaderManager().restartLoader(DATE_LIST, null, this);
-        List<LoadingInfo> ls = Parser.parseLoadingInfo(content);
-        if (ls.isEmpty()) {
-            Toast toast = Toast.makeText(getActivity(),
-                    R.string.no_record, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-        } else {
-            LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(getActivity());
-            loadingInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
-            loadingInfoDataHelper.bulkInsert(ls);
-        }
-    }
+//    public void setLoadingInfoHttpReq(final String date, String person) {
+//        HttpListener listener = new HttpListener<String>() {
+//            @Override
+//            public void onSuccess(String s, Response<String> response) {
+//                syncLoadingInfo(s, date);
+//            }
+//
+//            @Override
+//            public void onFailure(HttpException e, Response<String> response) {
+//            }
+//        };
+//        HttpClient.getInstance().getLoadingInfo(listener, date, person);
+//    }
+//
+//    public void syncLoadingInfo(String content, String date) {
+//        getLoaderManager().restartLoader(DATE_LIST, null, this);
+//        List<LoadingInfo> ls = Parser.parseLoadingInfo(content);
+//        if (ls.isEmpty()) {
+//            Toast toast = Toast.makeText(getActivity(),
+//                    R.string.no_record, Toast.LENGTH_SHORT);
+//            toast.setGravity(Gravity.CENTER, 0, 0);
+//            toast.show();
+//        } else {
+//            LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(getActivity());
+//            loadingInfoDataHelper.deleteByCondition("cDate = ?", new String[]{date});
+//            loadingInfoDataHelper.bulkInsert(ls);
+//        }
+//    }
 
     private void loadTempDialog(){
         printnum = 1;

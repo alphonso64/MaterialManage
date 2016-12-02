@@ -202,7 +202,6 @@ public class DataProvider extends ContentProvider {
     @Override
     public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
         synchronized (obj) {
-            Log.e("testcc","bulkInsert");
             SQLiteDatabase db = getDBHelper().getWritableDatabase();
             db.beginTransaction();
             try {
@@ -229,7 +228,6 @@ public class DataProvider extends ContentProvider {
             db.beginTransaction();
             try {
                 count = db.delete(matchTable(uri), selection, selectionArgs);
-                Log.e("testcc","del:"+count);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();

@@ -89,16 +89,18 @@
             </Button>
 
             <Button
-                android:id="@+id/signbutton"
-                android:layout_width="0dp"
+                android:id="@+id/selectbutton"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/loginbutton"
                 android:layout_below="@+id/loginbutton"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/login_button_seletor"
-                android:text="@string/sign_button"
+                android:text="选择服务器"
                 android:textColor="#ffffff"
                 android:textSize="15sp" />
+
+
 
         </RelativeLayout>
     </LinearLayout>

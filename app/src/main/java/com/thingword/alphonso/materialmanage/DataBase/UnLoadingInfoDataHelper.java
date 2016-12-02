@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
 
+import com.thingword.alphonso.materialmanage.Util.CLog;
 import com.thingword.alphonso.materialmanage.Util.Util;
 import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
@@ -90,7 +91,7 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
     }
 
     public CursorLoader getDetailCursorLoader(DistributionInfo distributionInfo) {
-        Log.e("testcc","getDetailCursorLoader"+" "+distributionInfo.getDate()
+        CLog.e("testcc","getDetailCursorLoader"+" "+distributionInfo.getDate()
                 +" "+Util.fillTaskCode(distributionInfo.getTasknumber())
                 +" "+ Util.fillProductCode(distributionInfo.getProductcode(),distributionInfo.getWorkshop()));
         return new CursorLoader(getContext(), getContentUri(), null, "date =  ? and cMoCode = ? and invcode = ?",
@@ -104,7 +105,6 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
         ContentValues values = new ContentValues();
         values.put("checked","true");
         int count  = update(values,"date = ? and cBatch = ?",new String[]{date,code});
-        Log.e("testcc","checkDataValid "+count);
         if(count == 0){
             return  false;
         }
@@ -148,7 +148,6 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
         values.put("checked_distri","true");
         int count  = update(values,"date = ? and cBatch = ? and cMoCode = ? and invcode = ? ",new String[]{distributionInfo.getDate(),code,Util.fillTaskCode(distributionInfo.getTasknumber()),
                 Util.fillProductCode(distributionInfo.getProductcode(),distributionInfo.getWorkshop())});
-        Log.e("testcc","setDistriDataChecked "+count);
         if(count == 0){
             return  false;
         }

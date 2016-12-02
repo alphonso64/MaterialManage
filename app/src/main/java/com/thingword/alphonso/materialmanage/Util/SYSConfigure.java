@@ -12,4 +12,6 @@ public class SYSConfigure {
     public static final String LOGIN_DB_COLE = "e_code";
     public static final String HAS_LOGED = "yes";
     public static final String NOT_LOGED = "no";
+    public static final String DOMIAN_DB = "domain_info";
+    public static final String DOMIAN_DB_IP = "ip";
 }

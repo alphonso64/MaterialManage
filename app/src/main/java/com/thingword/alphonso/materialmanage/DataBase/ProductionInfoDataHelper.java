@@ -74,7 +74,6 @@ public class ProductionInfoDataHelper extends BaseDataHelper implements BaseDBIn
         ContentValues values = new ContentValues();
         values.put("checked","true");
         int count  = update(values,"date = ? and cBatch = ?",new String[]{date,code});
-        Log.e("testcc","checkDataValid "+count);
         if(count == 0){
             return  false;
         }
