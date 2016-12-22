@@ -240,8 +240,11 @@ public class HttpClient {
         try {
             object.put("tasknumber", tasknum);
             object.put("productcode", productcode);
+            CLog.e("testcc","tasknumber"+tasknum+"productcode"+productcode);
         } catch (JSONException e) {
+
         }
+
         LinkedHashMap<String, String> header = new LinkedHashMap<>();
         StringRequest stringRequest = new StringRequest(DOMAIN_NAME+PRODUCTIONDETAILBYCODE_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));

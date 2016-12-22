@@ -40,14 +40,17 @@ import com.thingword.alphonso.materialmanage.ProductionScanCamActivity;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ReloadingGunScanActivity;
 import com.thingword.alphonso.materialmanage.ReloadingScanActivity;
+import com.thingword.alphonso.materialmanage.Util.CLog;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 import com.thingword.alphonso.materialmanage.http.HttpClient;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -76,11 +79,10 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
 
     private ProductDetailDataHelper mDataHelper;
     private ProductDetailCursorAdapter mAdapter;
-    private Calendar calendar;
-    private ProductionInfo productionInfo;
-    private static final int DATE_LIST = 1;
     private static final int ALL_LIST = 2;
     private ProgressDialog progressDialog;
+    private boolean hasFile ;
+    private boolean isChecking;
 
     private Handler mHandler = new Handler() {
 
@@ -93,6 +95,7 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     getLoaderManager().destroyLoader(ALL_LIST);
                     new MaterialDialog.Builder(getActivity()).title("无记录！").positiveText(R.string.sure).build().show();
                 }else{
+                    hasFile = true;
                     initCheckView();
                     getLoaderManager().restartLoader(ALL_LIST, null, ProduceLineFragment.this);
                 }
@@ -109,11 +112,14 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                 scanRightView.setVisibility(View.VISIBLE);
                 scanWrongView.setVisibility(View.GONE);
             }
-
         }
     };
 
-    private boolean isChecking;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("hasFile",hasFile);
+        super.onSaveInstanceState(outState);
+    }
 
     public void initCheckView(){
         resultView.setVisibility(View.VISIBLE);
@@ -153,6 +159,7 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     case R.id.line_clear:
                         getLoaderManager().destroyLoader(ALL_LIST);
                         uninitCheckView();
+                        hasFile = false;
                         break;
                     default:
                 }
@@ -197,7 +204,19 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                 }
             }
         });
+        hasFile = false;
+        checkSaveInstanceState(savedInstanceState);
+    }
 
+    private void checkSaveInstanceState(Bundle state){
+        if(state!=null){
+            boolean flag = state.getBoolean("hasFile",false);
+            if(flag) {
+                hasFile = true;
+                getLoaderManager().restartLoader(ALL_LIST, null, ProduceLineFragment.this);
+                initCheckView();
+            }
+        }
     }
 
     private void loadDiag() {
@@ -213,6 +232,7 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                         final String tasknum = edit_tasknum.getText().toString();
                         if(productcode.length() != 10 || tasknum.length() == 0){
                             new MaterialDialog.Builder(getActivity()).title("产品编码或料单号格式错误！").positiveText(R.string.sure).build().show();
+                            return;
                         }
                         progressDialog = new ProgressDialog(getActivity());
                         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -233,7 +253,6 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                 })
                 .negativeText(R.string.cancle).build();
         materialDialog.show();
-
     }
 
     public static ProduceLineFragment newInstance(String content) {
@@ -247,11 +266,7 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        if (id == DATE_LIST) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String date = simpleDateFormat.format(calendar.getTime());
-            return mDataHelper.getDetailCursorLoader(date,productionInfo.getTasknumber(),productionInfo.getProductcode());
-        }else if(id == ALL_LIST){
+       if(id == ALL_LIST){
             return mDataHelper.getCursorLoader();
         }
         return null;

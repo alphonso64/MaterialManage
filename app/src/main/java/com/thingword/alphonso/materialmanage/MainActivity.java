@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
+import com.thingword.alphonso.materialmanage.Util.CLog;
 import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.fragment.DistributionFragment;
 import com.thingword.alphonso.materialmanage.fragment.LoadingFragment;
@@ -33,7 +34,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener {
     private NoSrollViewPager mViewPager;
     private ArrayList<Fragment> mFragments;
-
+    private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,31 +46,31 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottomNavigationBar
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC
                 );
-//        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_archive_white_24dp, R.string.tab_loading).setActiveColorResource(R.color.colorPrimaryDark))
-//                .addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
-//                .addItem(new BottomNavigationItem(R.mipmap.ic_send_white_24dp, R.string.tab_distribution).setActiveColorResource(R.color.colorPrimaryDark))
-//                .addItem(new BottomNavigationItem(R.mipmap.ic_drag_handle_white_24dp, R.string.tab_line).setActiveColorResource(R.color.colorPrimaryDark))
-//                .addItem(new BottomNavigationItem(R.mipmap.ic_settings_white_24dp, R.string.tab_set).setActiveColorResource(R.color.colorPrimaryDark))
-//                .setFirstSelectedPosition(0)
-//                .initialise();
         bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_drag_handle_white_24dp, R.string.tab_line).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_settings_white_24dp, R.string.tab_set).setActiveColorResource(R.color.colorPrimaryDark))
-                .setFirstSelectedPosition(0)
+//                .setFirstSelectedPosition(0)
                 .initialise();
+        bottomNavigationBar.setFocusable(false);
         bottomNavigationBar.setTabSelectedListener(this);
-
         initFragments();
         mViewPager = (NoSrollViewPager) findViewById(R.id.viewPager);
         mViewPager.setAdapter(new MyFragmentPageAdapter(getSupportFragmentManager()));
         mViewPager.setCurrentItem(0);
         mViewPager.setOffscreenPageLimit(6);
 
-//        Resources res = getResources();
-//        DisplayMetrics dm = res.getDisplayMetrics();
-//        android.content.res.Configuration conf = res.getConfiguration();
-//        conf.locale = Locale.ENGLISH;
-//        res.updateConfiguration(conf, dm);
+        if(savedInstanceState!=null){
+            int indexTemp= savedInstanceState.getInt("index",0);
+            bottomNavigationBar.selectTab(indexTemp);
+//            CLog.e("testcc","savedInstanceState index "+indexTemp);
+        }else{
+            bottomNavigationBar.selectTab(0);
+        }
+
+        //bottomNavigationBar.selectTab(2);
+
+        //bottomNavigationBar.selectTab(1);
+
     }
 
     public void initFragments() {
@@ -113,20 +114,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         mFragments.add(SetFragment.newInstance("设置"));
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("index", index);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onTabSelected(int position) {
+        index = position;
+//        CLog.e("testcc","onTabSelected index "+index);
         mViewPager.setCurrentItem(position, false);
     }
 
     @Override
     public void onTabUnselected(int position) {
-
     }
 
     @Override
     public void onTabReselected(int position) {
-
     }
 
     public class MyFragmentPageAdapter extends FragmentStatePagerAdapter {

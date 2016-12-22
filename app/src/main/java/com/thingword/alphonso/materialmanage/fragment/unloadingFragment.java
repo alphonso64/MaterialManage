@@ -48,6 +48,7 @@ import com.thingword.alphonso.materialmanage.DataBase.UserSharedPreferences;
 import com.thingword.alphonso.materialmanage.R;
 import com.thingword.alphonso.materialmanage.ScanCamActivity;
 import com.thingword.alphonso.materialmanage.Util.BarCodeCreator;
+import com.thingword.alphonso.materialmanage.Util.CLog;
 import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
@@ -56,9 +57,11 @@ import com.thingword.alphonso.materialmanage.http.ServerConfig.Parser;
 
 import org.w3c.dom.Text;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -93,6 +96,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
     private static final int DATE_LIST_NAME = 2;
     private static final int DATE_LIST_LINE = 3;
     private static final int DATE_LIST_CBATCH = 4;
+    private static final int DATE_TEST = 5;
 
     private int printnum;
     private int printmaxNum = 10;
@@ -141,6 +145,7 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                     case R.id.unload_clear:
                         getLoaderManager().destroyLoader(DATE_LIST);
                         uninitCheckView();
+                        calendar = null;
                         break;
                     case R.id.unload_print:
                         String res = textView.getText().toString();
@@ -168,9 +173,41 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                 return false;
             }
         });
-//        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
+
         isChecking = false;
         return view;
+    }
+
+    private void checkSaveInstanceState(Bundle state){
+        if(state!=null){
+            String dates = state.getString("date",null);
+            if(dates!=null){
+                SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd");
+                Date date = null;
+                try {
+                    date = sdf.parse(dates);
+                    calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    CLog.e("testcc",dates);
+                    getLoaderManager().restartLoader(DATE_LIST, null, UnloadingFragment.this);
+                    initCheckView();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(calendar != null){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String date = simpleDateFormat.format(calendar.getTime());
+            outState.putString("date",date);
+            CLog.e("testcc","fragment onSaveInstanceState");
+        }
+
+        super.onSaveInstanceState(outState);
     }
 
     private void loadPrintDialog(final String res) {
@@ -261,6 +298,8 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                 }
             }
         });
+        CLog.e("testcc","onActivityCreated");
+        checkSaveInstanceState(savedInstanceState);
     }
 
     public static UnloadingFragment newInstance(String content) {
