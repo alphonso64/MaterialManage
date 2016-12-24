@@ -23,7 +23,7 @@
     <string name="printer_hander">手动打印标签</string>
     <string name="printer_opt">打印机</string>
 
-    <string name="app_version">版本</string>
+    <string name="app_version">版本:</string>
     <string name="update_data">更新数据</string>
     <string name="quit">退出登录</string>
     <string name="other_opt">其他</string>
@@ -44,5 +44,7 @@
     <string name="sort_name">产品名称排序</string>
     <string name="sort_code">材料编码排序</string>
     <string name="sort_line">线别排序</string>
+    <string name="version">1.3</string>
+    <string name="show_version">版本:V1.3</string>
 
 </resources>

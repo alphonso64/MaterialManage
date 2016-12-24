@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.litesuits.http.LiteHttp;
 import com.litesuits.http.impl.huc.HttpUrlClient;
 import com.litesuits.http.listener.HttpListener;
+import com.litesuits.http.request.FileRequest;
 import com.litesuits.http.request.StringRequest;
 import com.litesuits.http.request.content.JsonBody;
 import com.litesuits.http.request.param.HttpMethods;
@@ -34,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,11 +53,13 @@ public class HttpClient {
     public static final String LOADING_URL = "TestServer/rest/materail/reqLoadingInfo";
     public static final String PRODUCTIONDETAILBYCODE_URL =  "TestServer/rest/materail/reqProductionInfoDetailByCode";
     public static final String UNLOADING_URL =  "TestServer/rest/materail/reqAllUnLoadingInfo";
+    public static final String UPDATEINFO_URL =  "TestServer/rest/materail/reqUpdateVerion";
     public static final String BATCH_UNLOADING_URL = "TestServer/rest/materail/reqUnLoadingInfoByBatch";
     public static final String DISTRI_URL = "TestServer/rest/materail/reqDistriInfo";
     public static final String STOREPRODUCTION_URL =  "TestServer/rest/materail/reqStoreProductionInfo";
     public static final String PRODUCTION_URL ="TestServer/rest/materail/reqProductionInfo";
     public static final String PRODUCTIONDETAIL_URL =  "TestServer/rest/materail/reqProductionInfoDetail";
+    public static final String UPDATE_URL =  "TestServer/rest/materail/reqUpdateFile";
 
     private HttpClient() {
         DOMAIN_NAME = DoMainSharedPreferences.getIP(MApplication.getContext());
@@ -91,6 +95,18 @@ public class HttpClient {
         StringRequest stringRequest = new StringRequest(DOMAIN_NAME+LOGIN_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString())).setHttpListener(listener);
         liteHttp.executeAsync(stringRequest);
+    }
+
+    public void getUpdateInfo(HttpListener<String> listener) {
+        StringRequest stringRequest = new StringRequest(DOMAIN_NAME+UPDATEINFO_URL)
+                .setMethod(HttpMethods.Post).setHttpListener(listener);
+        liteHttp.executeAsync(stringRequest);
+    }
+
+    public void updateFile(HttpListener<File> listener){
+        FileRequest request = new FileRequest(DOMAIN_NAME+UPDATE_URL)
+                .setMethod(HttpMethods.Get).setHttpListener(listener);
+        liteHttp.executeAsync(request);
     }
 
 //    public void getLoadingInfo(HttpListener<String> listener, String date, String person) {
@@ -262,6 +278,8 @@ public class HttpClient {
         }
         return val.size();
     }
+
+
 
 //    public void parse(HttpListener<String> listener, String content) {
 //        if (listener == null || content == null) return;
