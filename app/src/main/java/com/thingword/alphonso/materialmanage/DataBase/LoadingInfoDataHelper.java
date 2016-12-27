@@ -2,9 +2,11 @@ package com.thingword.alphonso.materialmanage.DataBase;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 
+import com.thingword.alphonso.materialmanage.Util.Util;
 import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
 
 import java.util.ArrayList;
@@ -72,6 +74,27 @@ public class LoadingInfoDataHelper extends BaseDataHelper implements BaseDBInter
 
     public CursorLoader getDateCursorLoader(String date) {
         return new CursorLoader(getContext(), getContentUri(), null, "date = ?",new String[]{date},null);
+    }
+
+    public boolean isExist(String date){
+        Cursor cursor =   query(null,"date = ?",new String[]{date},null);
+        if(cursor.getCount()>0){
+            return  true;
+        }
+        return  false;
+    }
+
+    public boolean setDataChecked(String code){
+        ContentValues values = new ContentValues();
+        values.put("checked","true");
+//        int count  = update(values," cInvCode = ?"
+//                ,new String[]{Util.cutCode(code)}
+        int count  = update(values," cBatch = ?"
+                ,new String[]{code});
+        if(count == 0){
+            return  false;
+        }
+        return true;
     }
 
 //    public CursorLoader getEmptyCursorLoader() {

@@ -20,7 +20,7 @@
 
     <item
         android:id="@+id/unload_print"
-        android:icon="@mipmap/ic_reorder_white_24dp"
+        android:icon="@mipmap/ic_printer_white_24dp"
         android:orderInCategory="90"
         android:title="@string/print"
         android:visible="true"

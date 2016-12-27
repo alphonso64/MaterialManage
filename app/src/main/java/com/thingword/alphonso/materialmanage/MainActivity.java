@@ -46,8 +46,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         bottomNavigationBar
                 .setBackgroundStyle(BottomNavigationBar.BACKGROUND_STYLE_STATIC
                 );
-        bottomNavigationBar.addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
+        bottomNavigationBar
+                .addItem(new BottomNavigationItem(R.mipmap.ic_archive_white_24dp, R.string.tab_loading).setActiveColorResource(R.color.colorPrimaryDark))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_drag_handle_white_24dp, R.string.tab_line).setActiveColorResource(R.color.colorPrimaryDark))
+                .addItem(new BottomNavigationItem(R.mipmap.ic_account_check_white_24dp, R.string.tab_check).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_settings_white_24dp, R.string.tab_set).setActiveColorResource(R.color.colorPrimaryDark))
 //                .setFirstSelectedPosition(0)
                 .initialise();
@@ -62,15 +65,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         if(savedInstanceState!=null){
             int indexTemp= savedInstanceState.getInt("index",0);
             bottomNavigationBar.selectTab(indexTemp);
-//            CLog.e("testcc","savedInstanceState index "+indexTemp);
         }else{
             bottomNavigationBar.selectTab(0);
         }
-
-        //bottomNavigationBar.selectTab(2);
-
-        //bottomNavigationBar.selectTab(1);
-
     }
 
     public void initFragments() {
@@ -84,14 +81,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
         } catch (Exception e) {
             authority = 0;
         }
-//        Log.e("testcc","authority:"+authority);
-//        int a1 = (authority&Authority.UNLOADING_AUTHORITY);
-//        Log.e("testcc","authority 1:"+a1+" "+Authority.UNLOADING_AUTHORITY);
-//        if ((authority & Authority.LOADING_AUTHORITY) != 0) {
-//            mFragments.add(LoadingFragment.newInstance("入库"));
-//        } else {
-//            mFragments.add(TextFragment.newInstance("没有权限"));
-//        }
+
+        if ((authority & Authority.LOADING_AUTHORITY) != 0) {
+            mFragments.add(LoadingFragment.newInstance("入库"));
+        } else {
+            mFragments.add(TextFragment.newInstance("没有权限"));
+        }
 
         if ((authority & Authority.UNLOADING_AUTHORITY) != 0) {
             mFragments.add(UnloadingFragment.newInstance("出库"));
@@ -105,11 +100,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
 //            mFragments.add(TextFragment.newInstance("没有权限"));
 //        }
 
+
+
         if ((authority & Authority.PRODUCTIONLINE_AUTHORITY) != 0) {
             mFragments.add(ProduceLineFragment.newInstance("产线"));
         } else {
             mFragments.add(TextFragment.newInstance("没有权限"));
         }
+
+        mFragments.add(TextFragment.newInstance("没有权限"));
 
         mFragments.add(SetFragment.newInstance("设置"));
     }

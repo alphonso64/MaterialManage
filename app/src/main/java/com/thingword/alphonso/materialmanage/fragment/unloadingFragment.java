@@ -140,6 +140,8 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.unload_add:
+                        getLoaderManager().destroyLoader(DATE_LIST);
+                        uninitCheckView();
                         loadDiag();
                         break;
                     case R.id.unload_clear:
@@ -151,6 +153,8 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                         String res = textView.getText().toString();
                         if(res.length()>0){
                             loadPrintDialog(res.substring(0,res.length()-1));
+                        }else{
+                            loadNoPrintDialog();
                         }
                         break;
                     case R.id.unload_name_sort:
@@ -208,6 +212,14 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
         }
 
         super.onSaveInstanceState(outState);
+    }
+
+    private void loadNoPrintDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
+                setTitle("无扫描条码打印").
+                setPositiveButton("确定", null).
+                create();
+        alertDialog.show();
     }
 
     private void loadPrintDialog(final String res) {
@@ -330,8 +342,12 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
                         String date = simpleDateFormat.format(calendar.getTime());
                         TextView tx = (TextView) dialog.getCustomView().findViewById(R.id.excutor);
                         String person = tx.getText().toString();
-                        getLoaderManager().restartLoader(DATE_LIST, null, UnloadingFragment.this);
-                        initCheckView();
+                        if(mDataHelper.isExist(date)){
+                            getLoaderManager().restartLoader(DATE_LIST, null, UnloadingFragment.this);
+                            initCheckView();
+                        }else {
+                            loadNoDataDialog();
+                        }
                     }
                 })
                 .negativeText(R.string.cancle).build();
@@ -347,6 +363,14 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
         materialDialog.show();
+    }
+
+    private void loadNoDataDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).
+                setTitle("没有数据").
+                setPositiveButton("确定", null).
+                create();
+        alertDialog.show();
     }
 
     @Override

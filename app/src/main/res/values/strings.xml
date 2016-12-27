@@ -17,6 +17,7 @@
     <string name="tab_unloading">出库</string>
     <string name="tab_distribution">配料</string>
     <string name="tab_line">产线</string>
+    <string name="tab_check">点检</string>
     <string name="tab_set">设置</string>
 
     <string name="printer_label">打印机标签选择</string>

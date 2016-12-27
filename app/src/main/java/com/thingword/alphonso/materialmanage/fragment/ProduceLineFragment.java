@@ -166,7 +166,7 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                 return false;
             }
         });
-        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
+//        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
         isChecking = false;
         return view;
     }

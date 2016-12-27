@@ -143,6 +143,14 @@ public class UnLoadingInfoDataHelper extends BaseDataHelper implements BaseDBInt
         return query(null,"date = ? and cInvCode = ? and executor = ? and checked = ?",new String[]{date,Util.cutCode(code),name,"false"},null);
     }
 
+    public boolean isExist(String date){
+        Cursor cursor =   query(null,"date = ?",new String[]{date},null);
+        if(cursor.getCount()>0){
+            return  true;
+        }
+        return  false;
+    }
+
     public boolean setDistriDataChecked(String code,DistributionInfo distributionInfo){
         ContentValues values = new ContentValues();
         values.put("checked_distri","true");

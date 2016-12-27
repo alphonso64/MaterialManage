@@ -1,5 +1,6 @@
 package com.thingword.alphonso.materialmanage.CursorAdapter;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.CardView;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thingword.alphonso.materialmanage.R;
+import com.thingword.alphonso.materialmanage.Util.Util;
 import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
 
 
@@ -30,18 +32,27 @@ public class LoadingInfoCursorAdapter extends BaseAbstractRecycleCursorAdapter<R
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
         LoadingInfo ld = LoadingInfo.fromCursor(cursor);
-        ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
-        ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
-        ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
-        ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
-        ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
-        ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
 
+        if(ld.getChecked().equals("true")){
+            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.colorGray));
+        }else{
+            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
+        }
         ((CusViewHolder) holder).title_a.setText("名称:"+ld.getcInvName());
         ((CusViewHolder) holder).title_b.setText("规格:"+ld.getcInvStd());
-        ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcInvCode());
+        ((CusViewHolder) holder).title_c1.setText("物料编码:"+ld.getcBatch());
         ((CusViewHolder) holder).title_d1.setText("数量:"+ld.getiQuantity());
-        ((CusViewHolder) holder).title_d2.setText(ld.getDate());
+        ((CusViewHolder) holder).title_d2.setText(String.valueOf(cursor.getPosition()));
     }
 
     @Override

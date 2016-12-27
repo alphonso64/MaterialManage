@@ -106,7 +106,7 @@ public class DistributionFragment extends Fragment implements LoaderManager.Load
                 return false;
             }
         });
-        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
+//        SearchView mSearchView = (SearchView) toolbar.findViewById(R.id.load_search);
 
         return view;
     }

@@ -16,6 +16,7 @@ import com.litesuits.http.request.param.HttpMethods;
 import com.litesuits.http.response.Response;
 import com.thingword.alphonso.materialmanage.DataBase.DistributionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.DoMainSharedPreferences;
+import com.thingword.alphonso.materialmanage.DataBase.LoadingInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductDetailDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.ProductionInfoDataHelper;
 import com.thingword.alphonso.materialmanage.DataBase.UnLoadingInfoDataHelper;
@@ -25,6 +26,7 @@ import com.thingword.alphonso.materialmanage.app.MApplication;
 import com.thingword.alphonso.materialmanage.bean.BatchData;
 import com.thingword.alphonso.materialmanage.bean.User;
 import com.thingword.alphonso.materialmanage.bean.dbbean.DistributionInfo;
+import com.thingword.alphonso.materialmanage.bean.dbbean.LoadingInfo;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductDetail;
 import com.thingword.alphonso.materialmanage.bean.dbbean.ProductionInfo;
 import com.thingword.alphonso.materialmanage.bean.dbbean.UnLoadingInfo;
@@ -149,27 +151,25 @@ public class HttpClient {
         } catch (JSONException e) {
         }
         LinkedHashMap<String, String> header = new LinkedHashMap<>();
-//        header.put("contentType", "utf-8");
-//        header.put("Content-type", "application/x-java-serialized-object");
         StringRequest stringRequest = new StringRequest(DOMAIN_NAME+LOADING_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));
         try {
             Response<String> result;
 
-//            if((authority& Authority.LOADING_AUTHORITY)!=0){
-//                result = liteHttp.execute(stringRequest);
-//                List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
-//                if(ls.size()>0){
-//                    LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
-//                    loadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
-//                    loadingInfoDataHelper.bulkInsert(ls);
-//                }else{
-//                    val.add("入库:"+Parser.getLoadingErr());
-//                }
-//            }
+            if((authority& Authority.LOADING_AUTHORITY)!=0){
+                result = liteHttp.execute(stringRequest);
+                List<LoadingInfo> ls =Parser.parseLoadingInfo(result.getResult());
+                if(ls.size()>0){
+                    CLog.e("testcc","LoadingInfo size:"+ls.size());
+                    LoadingInfoDataHelper loadingInfoDataHelper = new LoadingInfoDataHelper(MApplication.getContext());
+                    loadingInfoDataHelper.deleteByCondition("date = ?", new String[]{date});
+                    loadingInfoDataHelper.bulkInsert(ls);
+                }else{
+                    val.add("入库:"+Parser.getLoadingErr());
+                }
+            }
 
             int flag = 0;
-
             if((authority&Authority.UNLOADING_AUTHORITY) != 0){
                 stringRequest.setUri(DOMAIN_NAME+BATCH_UNLOADING_URL);
                 result = liteHttp.execute(stringRequest);

@@ -84,7 +84,6 @@ public class ProductDetailDataHelper extends BaseDataHelper implements BaseDBInt
         return true;
     }
 
-
     public boolean setDataChecked(String code){
         ContentValues values = new ContentValues();
         values.put("checked","true");
