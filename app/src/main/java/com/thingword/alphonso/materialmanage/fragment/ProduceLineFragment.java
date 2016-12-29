@@ -2,6 +2,7 @@ package com.thingword.alphonso.materialmanage.fragment;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -49,6 +51,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -90,6 +93,7 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
         public void handleMessage(Message msg) {
             if(msg.what == 2){
                 progressDialog.dismiss();
+                CLog.e("testcc","get msg receive:");
                 int size = (int) msg.obj;
                 if(size == 0){
                     getLoaderManager().destroyLoader(ALL_LIST);
@@ -109,6 +113,11 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     editText.getText().clear();
                 }
             }else if(msg.what == 1){
+                scanRightView.setVisibility(View.VISIBLE);
+                scanWrongView.setVisibility(View.GONE);
+            }else if(msg.what == 3){
+                List<String>  ls= (List<String>) msg.obj;
+                mDataHelper.setDataCheckedAndNum(ls.get(1),ls.get(0));
                 scanRightView.setVisibility(View.VISIBLE);
                 scanWrongView.setVisibility(View.GONE);
             }
@@ -228,6 +237,8 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         EditText edit_productcode = (EditText) dialog.getCustomView().findViewById(R.id.editText_productcode);
                         EditText edit_tasknum = (EditText) dialog.getCustomView().findViewById(R.id.editText_tasknumber);
+                        edit_tasknum.setText("0000006990");
+                        edit_productcode.setText("2290902810");
                         final String productcode = edit_productcode.getText().toString();
                         final String tasknum = edit_tasknum.getText().toString();
                         if(productcode.length() != 10 || tasknum.length() == 0){
@@ -285,14 +296,55 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
     private void checkDataValid(){
         String parsedResult = textView.getText().toString();
         parsedResult = parsedResult.substring(0,parsedResult.length()-1);
-        boolean res = mDataHelper.setDataChecked(parsedResult);
+        boolean res = mDataHelper.isDataExist(parsedResult);
         if(res){
-            scanRightView.setVisibility(View.VISIBLE);
-            scanWrongView.setVisibility(View.GONE);
+           loadNumPickDialog(parsedResult);
         }else{
             scanWrongView.setVisibility(View.VISIBLE);
             scanRightView.setVisibility(View.GONE);
         }
+//        if(res){
+//            scanRightView.setVisibility(View.VISIBLE);
+//            scanWrongView.setVisibility(View.GONE);
+//        }else{
+//            scanWrongView.setVisibility(View.VISIBLE);
+//            scanRightView.setVisibility(View.GONE);
+//        }
+    }
+
+    private void loadNumPickDialog(final String invcode){
+        final MaterialDialog materialDialog = new MaterialDialog.Builder(getActivity()).title("输入物料数量")
+                .customView(R.layout.dialog_edittext3, true)
+                .positiveText(R.string.sure)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        EditText edit_num = (EditText) dialog.getCustomView().findViewById(R.id.editText_num);
+                        final String numText = edit_num.getText().toString();
+                        Message msg = mHandler.obtainMessage();
+                        msg.what = 3;
+                        List<String> ls = new ArrayList<String>();
+                        ls.add(numText);
+                        ls.add(invcode);
+                        msg.obj = ls;
+                        mHandler.sendMessage(msg);
+                    }
+                })
+                .negativeText(R.string.cancle).build();
+        materialDialog.show();
+    }
+
+    private void setDataValid(int num){
+//        String parsedResult = textView.getText().toString();
+//        parsedResult = parsedResult.substring(0,parsedResult.length()-1);
+//        boolean res = mDataHelper.setDataChecked(parsedResult);
+//        if(res){
+//            scanRightView.setVisibility(View.VISIBLE);
+//            scanWrongView.setVisibility(View.GONE);
+//        }else{
+//            scanWrongView.setVisibility(View.VISIBLE);
+//            scanRightView.setVisibility(View.GONE);
+//        }
     }
 }
 

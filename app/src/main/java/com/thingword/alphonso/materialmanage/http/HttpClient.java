@@ -53,7 +53,9 @@ public class HttpClient {
     //登陆判断
     public static final String LOGIN_URL =  "TestServer/rest/materail/reqUserLoginInfo";
     public static final String LOADING_URL = "TestServer/rest/materail/reqLoadingInfo";
-    public static final String PRODUCTIONDETAILBYCODE_URL =  "TestServer/rest/materail/reqProductionInfoDetailByCode";
+//    public static final String PRODUCTIONDETAILBYCODE_URL =  "TestServer/rest/materail/reqProductionInfoDetailByCode";
+    public static final String PRODUCTIONDETAILBYCODE_URL =  "TestServer/rest/materail/reqProductionInfoDetailForTestByCode";
+
     public static final String UNLOADING_URL =  "TestServer/rest/materail/reqAllUnLoadingInfo";
     public static final String UPDATEINFO_URL =  "TestServer/rest/materail/reqUpdateVerion";
     public static final String BATCH_UNLOADING_URL = "TestServer/rest/materail/reqUnLoadingInfoByBatch";
@@ -260,7 +262,6 @@ public class HttpClient {
         } catch (JSONException e) {
 
         }
-
         LinkedHashMap<String, String> header = new LinkedHashMap<>();
         StringRequest stringRequest = new StringRequest(DOMAIN_NAME+PRODUCTIONDETAILBYCODE_URL)
                 .setMethod(HttpMethods.Post).setHttpBody(new JsonBody(object.toString()));

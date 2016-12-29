@@ -91,21 +91,18 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
 
     private UnLoadingInfoDataHelper mDataHelper;
     private UnLoadingInfoCursorAdapter mAdapter;
-
     private static final int DATE_LIST = 1;
     private static final int DATE_LIST_NAME = 2;
     private static final int DATE_LIST_LINE = 3;
     private static final int DATE_LIST_CBATCH = 4;
     private static final int DATE_TEST = 5;
-
     private int printnum;
     private int printmaxNum = 10;
     private int printminNum = 1;
-
     private Calendar calendar;
+    private boolean isChecking;
 
     private Handler mHandler = new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == 0){
@@ -123,9 +120,6 @@ public class UnloadingFragment extends Fragment implements LoaderManager.LoaderC
             }
         }
     };
-
-    private boolean isChecking;
-
 
     @Nullable
     @Override

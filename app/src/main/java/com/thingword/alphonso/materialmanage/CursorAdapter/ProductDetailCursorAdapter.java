@@ -32,21 +32,25 @@ public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter
     public void onBindViewHolder(RecyclerView.ViewHolder holder, Cursor cursor) {
         ProductDetail ld = ProductDetail.fromCursor(cursor);
         if(ld.getChecked().equals("true")){
-            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_a1.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_a2.setTextColor(context.getResources().getColor(R.color.colorGray));
+            ((CusViewHolder) holder).title_a2.setVisibility(View.VISIBLE);
             ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.colorGray));
             ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.colorGray));
         }else{
-            ((CusViewHolder) holder).title_a.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_a1.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_a1.setTextColor(context.getResources().getColor(R.color.textblack));
+            ((CusViewHolder) holder).title_a2.setVisibility(View.GONE);
             ((CusViewHolder) holder).title_b.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_c1.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_c2.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_d1.setTextColor(context.getResources().getColor(R.color.textblack));
             ((CusViewHolder) holder).title_d2.setTextColor(context.getResources().getColor(R.color.textblack));
         }
-        ((CusViewHolder) holder).title_a.setText("产品:"+ld.getInvname());
+        ((CusViewHolder) holder).title_a1.setText("产品:"+ld.getInvname());
         ((CusViewHolder) holder).title_b.setText("规格:"+ld.getInvstd());
         ((CusViewHolder) holder).title_c1.setText("条码:"+ld.getInvcode());
         ((CusViewHolder) holder).title_c2.setText(String.valueOf(cursor.getPosition()));
@@ -54,14 +58,15 @@ public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(context).inflate(R.layout.cardview_loadinfo_item,parent,false);
+        View v= LayoutInflater.from(context).inflate(R.layout.cardview_lineinfo_item,parent,false);
         CusViewHolder bvh=new CusViewHolder(v,this);
         cnt = 0;
         return bvh;
     }
 
     public static class CusViewHolder extends RecyclerView.ViewHolder {
-        TextView title_a;
+        TextView title_a1;
+        TextView title_a2;
         TextView title_b;
         TextView title_c1;
         TextView title_c2;
@@ -70,7 +75,8 @@ public class ProductDetailCursorAdapter extends BaseAbstractRecycleCursorAdapter
         ProductDetailCursorAdapter mAdapter;
         public CusViewHolder(View itemView, ProductDetailCursorAdapter adapter) {
             super(itemView);
-            title_a = (TextView) itemView.findViewById(R.id.cv_title_a);
+            title_a1 = (TextView) itemView.findViewById(R.id.cv_title_a1);
+            title_a2 = (TextView) itemView.findViewById(R.id.cv_title_a2);
             title_b = (TextView) itemView.findViewById(R.id.cv_title_b);
             title_c1 = (TextView) itemView.findViewById(R.id.cv_title_c1);
             title_c2 = (TextView) itemView.findViewById(R.id.cv_title_c2);

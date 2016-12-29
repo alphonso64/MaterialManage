@@ -2,6 +2,7 @@ package com.thingword.alphonso.materialmanage.DataBase;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
@@ -93,6 +94,25 @@ public class ProductDetailDataHelper extends BaseDataHelper implements BaseDBInt
             return  false;
         }
         return true;
+    }
+
+    public boolean setDataCheckedAndNum(String code,String num){
+        ContentValues values = new ContentValues();
+        values.put("checked","true");
+        int count  = update(values," invcode = ? and num = ?"
+                ,new String[]{Util.cutCode(code),num});
+        if(count == 0){
+            return  false;
+        }
+        return true;
+    }
+
+    public boolean isDataExist(String code){
+        Cursor cursor =   query(null,"invcode = ?",new String[]{code},null);
+        if(cursor.getCount()>0){
+            return  true;
+        }
+        return  false;
     }
 
 }

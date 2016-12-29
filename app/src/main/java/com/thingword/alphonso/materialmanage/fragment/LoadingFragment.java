@@ -71,7 +71,6 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
     Toolbar toolbar;
     @BindView(R.id.ld_recyclerview)
     RecyclerView mRecyclerView;
-
     @BindView(R.id.load_editText)
     EditText editText;
     @BindView(R.id.load_result_text)
@@ -82,6 +81,7 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
     TextView scanWrongView;
     @BindView(R.id.loading_result_view)
     LinearLayout resultView;
+
     private Unbinder unbinder;
     private LoadingInfoDataHelper mDataHelper;
     private LoadingInfoCursorAdapter mAdapter;
@@ -95,9 +95,7 @@ public class LoadingFragment extends Fragment implements LoaderManager.LoaderCal
     private int batchminNum = 0;
     private String printt_batch;
 
-
     private Handler mHandler = new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 0) {

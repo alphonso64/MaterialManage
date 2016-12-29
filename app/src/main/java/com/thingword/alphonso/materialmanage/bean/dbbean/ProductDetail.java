@@ -20,6 +20,7 @@ public class ProductDetail {
     private String linenum;
     private String workshop;
     private String checked;
+    private String num;
 
     public static ProductDetail fromCursor(Cursor cursor) {
         ProductDetail productDetail= cupboard().withCursor(cursor).get(ProductDetail.class);
@@ -120,5 +121,13 @@ public class ProductDetail {
 
     public void setChecked(String checked) {
         this.checked = checked;
+    }
+
+    public String getNum() {
+        return num;
+    }
+
+    public void setNum(String num) {
+        this.num = num;
     }
 }
