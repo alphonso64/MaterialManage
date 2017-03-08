@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 .addItem(new BottomNavigationItem(R.mipmap.ic_archive_white_24dp, R.string.tab_loading).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_unarchive_white_24dp, R.string.tab_unloading).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_drag_handle_white_24dp, R.string.tab_line).setActiveColorResource(R.color.colorPrimaryDark))
-                .addItem(new BottomNavigationItem(R.mipmap.ic_account_check_white_24dp, R.string.tab_check).setActiveColorResource(R.color.colorPrimaryDark))
+                //.addItem(new BottomNavigationItem(R.mipmap.ic_account_check_white_24dp, R.string.tab_check).setActiveColorResource(R.color.colorPrimaryDark))
                 .addItem(new BottomNavigationItem(R.mipmap.ic_settings_white_24dp, R.string.tab_set).setActiveColorResource(R.color.colorPrimaryDark))
-//                .setFirstSelectedPosition(0)
+                .setFirstSelectedPosition(0)
                 .initialise();
         bottomNavigationBar.setFocusable(false);
         bottomNavigationBar.setTabSelectedListener(this);
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
             mFragments.add(TextFragment.newInstance("没有权限"));
         }
 
-        mFragments.add(TextFragment.newInstance("没有权限"));
+//        mFragments.add(TextFragment.newInstance("没有权限"));
 
         mFragments.add(SetFragment.newInstance("设置"));
     }

@@ -237,8 +237,8 @@ public class ProduceLineFragment extends Fragment implements LoaderManager.Loade
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         EditText edit_productcode = (EditText) dialog.getCustomView().findViewById(R.id.editText_productcode);
                         EditText edit_tasknum = (EditText) dialog.getCustomView().findViewById(R.id.editText_tasknumber);
-                        edit_tasknum.setText("0000006990");
-                        edit_productcode.setText("2290902810");
+//                        edit_tasknum.setText("0000006990");
+//                        edit_productcode.setText("2290902810");
                         final String productcode = edit_productcode.getText().toString();
                         final String tasknum = edit_tasknum.getText().toString();
                         if(productcode.length() != 10 || tasknum.length() == 0){
